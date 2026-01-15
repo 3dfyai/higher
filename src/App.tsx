@@ -9,6 +9,7 @@ import Manifesto from './components/Manifesto';
 import Stats from './components/Stats';
 import HowToBuy from './components/HowToBuy';
 import FloatingTexts from './components/FloatingTexts';
+import GifFrames from './components/GifFrames';
 
 function App() {
   useEffect(() => {
@@ -43,6 +44,7 @@ function App() {
       <BackgroundGrid />
       <Hero />
       <UpdraftGrid />
+      <GifFrames />
       <FloatingTexts />
       <DictionaryCard />
       <svg className="annotation-line" width="600" height="400">
