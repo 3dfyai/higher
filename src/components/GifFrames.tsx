@@ -107,7 +107,7 @@ const GifFrames: React.FC<GifFramesProps> = ({ manifestoBottomPosition }) => {
         };
 
         // Throttle resize events
-        let resizeTimeout: NodeJS.Timeout;
+        let resizeTimeout: ReturnType<typeof setTimeout>;
         const throttledResize = () => {
             clearTimeout(resizeTimeout);
             resizeTimeout = setTimeout(handleResize, 150);

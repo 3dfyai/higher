@@ -117,7 +117,7 @@ const Manifesto: React.FC<ManifestoProps> = ({ onHeightChange }) => {
             resizeObserver.observe(sectionRef.current);
         }
 
-        let resizeTimeout: NodeJS.Timeout;
+        let resizeTimeout: ReturnType<typeof setTimeout>;
         const throttledResize = () => {
             clearTimeout(resizeTimeout);
             resizeTimeout = setTimeout(updateBottomPosition, 200);
