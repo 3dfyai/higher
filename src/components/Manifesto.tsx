@@ -9,80 +9,74 @@ const Manifesto: React.FC<ManifestoProps> = ({ onHeightChange }) => {
     const lineRefs = useRef<(HTMLDivElement | null)[]>([]);
     const sectionRef = useRef<HTMLElement>(null);
 
-    const fullManifestoText = `Ascend is not merely a direction—it is a continuous state of being. It represents the unwavering conviction that limits are artificial constructs. In an environment often defined by volatility and skepticism, to Ascend is to embody resilience. It is a refusal to accept stagnation.
-
-We are the architects of our own trajectory. When market sentiment faltered, we remained steadfast. When uncertainty spread, we maintained clarity. We understood a fundamental truth: potential is infinite. Every peak is simply a new baseline. Every correction is an opportunity to recalibrate before the next elevation.
-
-To Ascend is to adopt a mindset of abundance and longevity. It is the philosophy that distinguishes the visionary from the reactionary. When you Ascend, you do not fear the charts; you analyze them with the certainty of the long-term trend. The destination has always been upwards.
-
-This community is forged by those who demand excellence. We are not here for transient gains. We are here because we align with a movement that resonates with our core ambition: growth. Uninhibited growth. Unwavering belief. A definitive stance against mediocrity.
-
-Ascend is the response to every doubt. "What is the strategy?" Ascend. "What is the objective?" Ascend. "Where does it end?" It doesn't. This is not speculation; it is the inevitable result of collective conviction.
-
-Welcome to the ascent. Whether you are new to the journey or a foundational member, you are part of a paradigm shift. There is no regression here. There is only the forward momentum.`;
-
-    // Split text into lines (split by newlines and also by sentence breaks for better effect)
-    const lines = fullManifestoText
-        .split('\n')
-        .filter(line => line.trim().length > 0)
-        .flatMap(paragraph => {
-            // Split paragraphs into sentences for more granular animation
-            const sentences = paragraph.split(/(?<=[.!?])\s+/).filter(s => s.trim().length > 0);
-            return sentences.length > 0 ? sentences : [paragraph];
-        });
+    const lines = [
+        "Ascend is not merely a direction—it is a continuous state of being.",
+        "It represents the unwavering conviction that limits are artificial constructs.",
+        "Not everyone was meant to survive the trenches.",
+        "Failure was the filter.",
+        "Pressure was the path.",
+        "Elevation was inevitable."
+    ];
 
     useEffect(() => {
         const handleScroll = () => {
             if (!sectionRef.current) return;
 
-            const sectionTop = sectionRef.current.offsetTop;
-            const sectionHeight = sectionRef.current.offsetHeight;
+            const rect = sectionRef.current.getBoundingClientRect();
             const windowHeight = window.innerHeight;
             const scrollY = window.scrollY;
+            const sectionTop = rect.top + scrollY;
+            const sectionHeight = rect.height;
 
-            // Calculate when section is in viewport
-            const sectionStart = sectionTop - windowHeight * 0.6;
-            const sectionEnd = sectionTop + sectionHeight - windowHeight * 0.2;
+            // Start showing text when section enters viewport (earlier trigger)
+            const sectionStart = sectionTop - windowHeight * 0.7; // Start earlier
+            const sectionEnd = sectionTop + sectionHeight - windowHeight * 0.1;
+            const sectionRange = sectionEnd - sectionStart;
 
             if (scrollY >= sectionStart && scrollY <= sectionEnd) {
-                const progress = Math.max(0, Math.min(1, (scrollY - sectionStart) / (sectionEnd - sectionStart)));
+                const progress = Math.max(0, Math.min(1, (scrollY - sectionStart) / sectionRange));
                 const totalLines = lines.length;
                 
-                // Calculate which lines should be visible based on scroll progress
                 const newVisibleLines = new Set<number>();
                 
+                // Each line appears earlier - spread across the scroll range
                 lineRefs.current.forEach((lineRef, index) => {
                     if (!lineRef) return;
                     
-                    // Each line appears progressively as we scroll through the section
-                    // Spread the reveal across the scroll range
-                    const lineThreshold = (index + 1) / totalLines;
-                    const adjustedProgress = progress * 1.1; // Slight overlap for smoother transition
+                    // Adjusted thresholds for earlier appearance, especially for lines 3 and 4
+                    const thresholds = [
+                        0.05,  // Line 0: appears at 5%
+                        0.20,  // Line 1: appears at 20%
+                        0.35,  // Line 2: appears at 35%
+                        0.45,  // Line 3: appears at 45% (was 55%)
+                        0.60,  // Line 4: appears at 60% (was 71.6%)
+                        0.75   // Line 5: appears at 75% (was 88.3%)
+                    ];
                     
-                    if (lineThreshold <= adjustedProgress) {
+                    const lineThreshold = thresholds[index] || (index + 0.1) / totalLines;
+                    
+                    if (progress >= lineThreshold) {
                         newVisibleLines.add(index);
                     }
                 });
 
                 setVisibleLines(newVisibleLines);
             } else if (scrollY < sectionStart) {
-                // Before section, no lines visible
                 setVisibleLines(new Set());
             } else if (scrollY > sectionEnd) {
-                // After section, all lines visible
+                // All lines visible after section
                 setVisibleLines(new Set(lines.map((_, i) => i)));
             }
         };
 
-        // Throttle scroll events for better performance
-        let ticking = false;
+        // Optimized scroll handler with debouncing
+        let rafId: number | null = null;
         const throttledScroll = () => {
-            if (!ticking) {
-                window.requestAnimationFrame(() => {
+            if (rafId === null) {
+                rafId = requestAnimationFrame(() => {
                     handleScroll();
-                    ticking = false;
+                    rafId = null;
                 });
-                ticking = true;
             }
         };
 
@@ -91,6 +85,9 @@ Welcome to the ascent. Whether you are new to the journey or a foundational memb
 
         return () => {
             window.removeEventListener('scroll', throttledScroll);
+            if (rafId !== null) {
+                cancelAnimationFrame(rafId);
+            }
         };
     }, [lines.length]);
 
@@ -111,9 +108,8 @@ Welcome to the ascent. Whether you are new to the journey or a foundational memb
         // Initial calculation
         updateBottomPosition();
 
-        // Use ResizeObserver only (more efficient than resize events)
+        // Use ResizeObserver only
         const resizeObserver = new ResizeObserver(() => {
-            // Throttle ResizeObserver callbacks
             requestAnimationFrame(updateBottomPosition);
         });
 
@@ -121,7 +117,6 @@ Welcome to the ascent. Whether you are new to the journey or a foundational memb
             resizeObserver.observe(sectionRef.current);
         }
 
-        // Only listen to resize for window size changes, not scroll
         let resizeTimeout: NodeJS.Timeout;
         const throttledResize = () => {
             clearTimeout(resizeTimeout);
@@ -142,15 +137,16 @@ Welcome to the ascent. Whether you are new to the journey or a foundational memb
             <div className="manifesto-lines-container">
                 {lines.map((line, index) => {
                     const isVisible = visibleLines.has(index);
+                    
                     const highlightWord = (text: string) => {
-                        const parts = text.split(/(Ascend)/gi);
-                        return parts.map((part, i) => 
-                            part.toLowerCase() === 'ascend' ? (
-                                <span key={i} className="manifesto-highlight">{part}</span>
-                            ) : (
-                                part
-                            )
-                        );
+                        const parts = text.split(/(Ascend|trenches|Failure|Pressure|Elevation)/gi);
+                        return parts.map((part, i) => {
+                            const lowerPart = part.toLowerCase();
+                            if (['ascend', 'trenches', 'failure', 'pressure', 'elevation'].includes(lowerPart)) {
+                                return <span key={i} className="manifesto-highlight">{part}</span>;
+                            }
+                            return part;
+                        });
                     };
 
                     return (
@@ -159,7 +155,7 @@ Welcome to the ascent. Whether you are new to the journey or a foundational memb
                             ref={(el) => {
                                 lineRefs.current[index] = el;
                             }}
-                            className={`manifesto-line ${isVisible ? 'manifesto-line-visible' : ''}`}
+                            className={`manifesto-line manifesto-line-${index} ${isVisible ? 'manifesto-line-visible' : ''}`}
                         >
                             {highlightWord(line)}
                         </div>

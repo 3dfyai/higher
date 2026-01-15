@@ -12,11 +12,11 @@ function App() {
   const [manifestoBottomPosition, setManifestoBottomPosition] = useState<number | undefined>(undefined);
 
   useEffect(() => {
-    let ticking = false;
+    let rafId: number | null = null;
     
     const handleScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
+      if (rafId === null) {
+        rafId = requestAnimationFrame(() => {
           const scrolled = window.pageYOffset;
 
           const candle = document.querySelector('.green-candle') as HTMLElement;
@@ -29,9 +29,8 @@ function App() {
             headline.style.transform = `rotate(-90deg) translateX(-100%) translateY(${scrolled * 0.5}px)`;
           }
           
-          ticking = false;
+          rafId = null;
         });
-        ticking = true;
       }
     };
 
@@ -39,6 +38,9 @@ function App() {
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
+      }
     };
   }, []);
 
