@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;900&family=JetBrains+Mono:wght@400;700&family=Gloria+Hallelujah&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;900&family=JetBrains+Mono:wght@400;700&family=Gloria+Hallelujah&family=Montserrat:wght@400;600;700;800;900&display=swap');
 
 :root {
   --electric-blue: #3B82F6;
@@ -398,9 +398,9 @@ body {
 }
 
 .manifesto-line {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: clamp(1.8rem, 4vw, 3.5rem);
-  font-weight: 400;
+  font-weight: 700;
   color: rgba(255, 255, 255, 0.95);
   line-height: 1.6;
   opacity: 0;
