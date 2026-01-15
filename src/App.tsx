@@ -6,7 +6,6 @@ import DictionaryCard from './components/DictionaryCard';
 import TokenomicsReceipt from './components/TokenomicsReceipt';
 import Footer from './components/Footer';
 import Manifesto from './components/Manifesto';
-import FloatingTexts from './components/FloatingTexts';
 import GifFrames from './components/GifFrames';
 
 function App() {
@@ -43,7 +42,6 @@ function App() {
       <Hero />
       <UpdraftGrid />
       <GifFrames />
-      <FloatingTexts />
       <DictionaryCard />
       <svg className="annotation-line" width="600" height="400">
         <path d="M0,0 C150,50 400,-150 500,-400" stroke="#ff3333" fill="transparent" strokeWidth="3" strokeDasharray="5,5" />
