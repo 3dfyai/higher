@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import BackgroundGrid from './components/BackgroundGrid';
 import Hero from './components/Hero';
-import UpdraftGrid from './components/UpdraftGrid';
 import DictionaryCard from './components/DictionaryCard';
 import TokenomicsReceipt from './components/TokenomicsReceipt';
 import Footer from './components/Footer';
@@ -12,11 +11,6 @@ function App() {
   useEffect(() => {
     const handleScroll = () => {
       const scrolled = window.pageYOffset;
-      const frames = document.querySelectorAll('.frame') as NodeListOf<HTMLElement>;
-      frames.forEach((frame, index) => {
-        const speed = (index + 1) * 0.2;
-        frame.style.transform = `translateY(${scrolled * speed * -1}px) rotate(${5 - (index * 4)}deg)`;
-      });
 
       const candle = document.querySelector('.green-candle') as HTMLElement;
       if (candle) {
@@ -40,7 +34,6 @@ function App() {
     <>
       <BackgroundGrid />
       <Hero />
-      <UpdraftGrid />
       <GifFrames />
       <DictionaryCard />
       <svg className="annotation-line" width="600" height="400">

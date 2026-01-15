@@ -53,18 +53,6 @@ const GifFrame: React.FC<GifFrameProps> = ({ className, style, offset = 0 }) => 
 const GifFrames: React.FC = () => {
     return (
         <>
-            {/* === HERO AREA (50-100vh) === */}
-            <GifFrame className="gif-frame-1" style={{ top: '55vh', right: '3%' }} offset={0} />
-            <GifFrame className="gif-frame-2" style={{ top: '65vh', left: '2%' }} offset={5} />
-            <GifFrame className="gif-frame-3" style={{ top: '85vh', right: '5%' }} offset={10} />
-            <GifFrame className="gif-frame-4" style={{ top: '95vh', left: '4%' }} offset={15} />
-
-            {/* === BEFORE DICTIONARY (100-150vh) === */}
-            <GifFrame className="gif-frame-5" style={{ top: '110vh', right: '2%' }} offset={20} />
-            <GifFrame className="gif-frame-6" style={{ top: '120vh', left: '3%' }} offset={25} />
-            <GifFrame className="gif-frame-7" style={{ top: '135vh', right: '6%' }} offset={30} />
-            <GifFrame className="gif-frame-8" style={{ top: '145vh', left: '2%' }} offset={35} />
-
             {/* === AROUND MANIFESTO SIDES (170-320vh) === */}
             <GifFrame className="gif-frame-9" style={{ top: '175vh', right: '2%' }} offset={40} />
             <GifFrame className="gif-frame-10" style={{ top: '190vh', left: '2%' }} offset={45} />
