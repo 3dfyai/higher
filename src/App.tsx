@@ -1,13 +1,16 @@
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import BackgroundGrid from './components/BackgroundGrid';
 import Hero from './components/Hero';
-import DictionaryCard from './components/DictionaryCard';
 import TokenomicsReceipt from './components/TokenomicsReceipt';
 import Footer from './components/Footer';
 import Manifesto from './components/Manifesto';
 import GifFrames from './components/GifFrames';
+import LoadingScreen from './components/LoadingScreen';
 
 function App() {
+  const [loading, setLoading] = useState(true);
+  const [manifestoBottomPosition, setManifestoBottomPosition] = useState<number | undefined>(undefined);
+
   useEffect(() => {
     const handleScroll = () => {
       const scrolled = window.pageYOffset;
@@ -32,14 +35,11 @@ function App() {
 
   return (
     <>
+      {loading && <LoadingScreen onComplete={() => setLoading(false)} />}
       <BackgroundGrid />
       <Hero />
-      <GifFrames />
-      <DictionaryCard />
-      <svg className="annotation-line" width="600" height="400">
-        <path d="M0,0 C150,50 400,-150 500,-400" stroke="#ff3333" fill="transparent" strokeWidth="3" strokeDasharray="5,5" />
-      </svg>
-      <Manifesto />
+      <Manifesto onHeightChange={setManifestoBottomPosition} />
+      <GifFrames manifestoBottomPosition={manifestoBottomPosition} />
       <TokenomicsReceipt />
       <Footer />
     </>

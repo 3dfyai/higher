@@ -243,52 +243,6 @@ body {
   transform: rotate(45deg);
 }
 
-/* 4. Dictionary Section */
-.dictionary-card {
-  position: absolute;
-  left: 50%;
-  top: 150vh;
-  transform: translate(-50%, -50%);
-  background: var(--card-bg);
-  color: var(--text-primary);
-  width: 500px;
-  padding: 40px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.4);
-  z-index: 15;
-  backdrop-filter: blur(10px);
-}
-
-.dictionary-card h2 {
-  font-size: 2.5rem;
-  margin-bottom: 5px;
-}
-
-.dictionary-card .phonetic {
-  font-family: 'JetBrains Mono';
-  color: var(--text-secondary);
-  margin-bottom: 20px;
-}
-
-.dictionary-card .type {
-  font-style: italic;
-  color: var(--text-secondary);
-  margin-bottom: 10px;
-  display: block;
-}
-
-.dictionary-card p {
-  line-height: 1.6;
-  font-size: 1.1rem;
-}
-
-.annotation-line {
-  position: absolute;
-  top: 150vh;
-  left: 50%;
-  z-index: 16;
-  pointer-events: none;
-}
 
 /* 5. Tokenomics Receipt */
 .receipt {
@@ -423,65 +377,58 @@ body {
   transform: rotate(-10deg);
 }
 
-/* 7. Manifesto Section */
-.manifesto-section {
+/* 7. Manifesto Section - Cinematic Full Width */
+.manifesto-section-cinematic {
   position: absolute;
-  top: 170vh;
+  top: 100vh;
   left: 0;
   right: 0;
-  padding: 100px 10%;
+  width: 100%;
+  padding: 15vh 8vw 30vh 8vw;
   z-index: 20;
+  height: auto;
 }
 
-.manifesto-container {
-  max-width: 900px;
-  margin: 0 auto;
+.manifesto-lines-container {
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5vh;
 }
 
-.manifesto-title {
-  font-size: 4rem;
-  font-weight: 900;
-  color: var(--text-primary);
-  text-transform: uppercase;
-  letter-spacing: -0.03em;
-  margin-bottom: 60px;
-  text-align: center;
+.manifesto-line {
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(1.8rem, 4vw, 3.5rem);
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.95);
+  line-height: 1.6;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+  text-shadow: 0 0 20px rgba(20, 241, 149, 0.3),
+               0 0 40px rgba(20, 241, 149, 0.2),
+               0 0 60px rgba(20, 241, 149, 0.1);
+  letter-spacing: -0.01em;
+  width: 100%;
 }
 
-.manifesto-title span {
-  color: var(--solana-green);
+.manifesto-line-visible {
+  opacity: 1;
+  transform: translateY(0);
+  text-shadow: 0 0 30px rgba(20, 241, 149, 0.5),
+               0 0 60px rgba(20, 241, 149, 0.3),
+               0 0 90px rgba(20, 241, 149, 0.15),
+               0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-.manifesto-content {
-  background: var(--card-bg);
-  padding: 60px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(10px);
-}
-
-.manifesto-content p {
-  font-size: 1.25rem;
-  color: var(--text-secondary);
-  line-height: 1.9;
-  margin-bottom: 30px;
-}
-
-.manifesto-content p:last-child {
-  margin-bottom: 0;
-}
-
-.manifesto-content .highlight {
+.manifesto-highlight {
   color: var(--solana-green);
   font-weight: 700;
-}
-
-.manifesto-content .final-line {
-  font-size: 1.8rem;
-  text-align: center;
-  margin-top: 50px;
-  font-weight: 900;
+  text-shadow: 0 0 40px rgba(20, 241, 149, 0.8),
+               0 0 80px rgba(20, 241, 149, 0.5),
+               0 0 120px rgba(20, 241, 149, 0.3);
 }
 
 /* 8. Stats Section */
@@ -792,4 +739,74 @@ body {
     opacity: 0;
     transform: translateX(-50%) translateY(0);
   }
+}
+
+/* Loading Screen */
+.loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999;
+  background-color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  transition: opacity 1.2s ease-out, transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: all;
+}
+
+.loading-screen.slide-up-exit {
+  opacity: 0;
+  transform: translateY(-20px);
+  pointer-events: none;
+}
+
+.loading-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 1;
+  transition: opacity 1s ease-out;
+}
+
+.loading-screen.slide-up-exit .loading-video {
+  opacity: 0.8;
+}
+
+/* Cinematic Manifesto - Continuous Stream */
+.typewriter-container {
+  font-family: 'JetBrains Mono', monospace;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  /* Preserve paragraph spacing from single string */
+  color: #fff;
+  font-size: 1.4rem;
+  text-shadow: 0 0 5px rgba(20, 241, 149, 0.3);
+  position: relative;
+}
+
+.text-highlight {
+  color: var(--solana-green);
+  font-weight: bold;
+  text-shadow: 0 0 10px rgba(20, 241, 149, 0.8);
+}
+
+.text-redacted {
+  color: transparent;
+  background-color: #000;
+  border-radius: 2px;
+  /* Make it look like a black block */
+  box-shadow: 0 0 0 1px #000;
+}
+
+.typewriter-cursor {
+  display: inline-block;
+  color: var(--solana-green);
+  animation: blink 0.1s step-end infinite;
+  /* Fast blink like active terminal */
+  margin: 0 1px;
+  vertical-align: text-bottom;
 }

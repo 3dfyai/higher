@@ -70,29 +70,56 @@ const GifFrame: React.FC<GifFrameProps> = ({ className, style, offset = 0 }) => 
     );
 };
 
-const GifFrames: React.FC = () => {
+interface GifFramesProps {
+    manifestoBottomPosition?: number;
+}
+
+const GifFrames: React.FC<GifFramesProps> = ({ manifestoBottomPosition }) => {
+    const [windowHeight, setWindowHeight] = useState<number>(typeof window !== 'undefined' ? window.innerHeight : 1080);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setWindowHeight(window.innerHeight);
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    // Calculate starting position relative to manifesto end
+    // Add spacing (e.g., 10vh) after manifesto ends
+    const getTopPosition = (offsetVh: number) => {
+        if (!manifestoBottomPosition) {
+            // Fallback to static position if manifesto position not available
+            return `calc(460vh + ${offsetVh}px)`;
+        }
+        // Convert offsetVh (in viewport heights) to pixels and add to manifesto bottom
+        const offsetPx = (offsetVh / 100) * windowHeight;
+        return `${manifestoBottomPosition + offsetPx}px`;
+    };
+
+    // Spacing between GIF rows (in viewport heights)
+    const rowSpacing = 30; // 30vh between rows
+    const startOffset = 10; // Start 10vh after manifesto ends
+
     return (
         <>
-            {/* === AROUND MANIFESTO SIDES (170-320vh) === */}
-            <GifFrame className="gif-frame-9" style={{ top: '175vh', right: '2%' }} offset={0} />
-            <GifFrame className="gif-frame-10" style={{ top: '190vh', left: '2%' }} offset={5} />
-            <GifFrame className="gif-frame-1" style={{ top: '220vh', right: '3%' }} offset={10} />
-            <GifFrame className="gif-frame-2" style={{ top: '250vh', left: '3%' }} offset={15} />
-            <GifFrame className="gif-frame-3" style={{ top: '280vh', right: '2%' }} offset={20} />
-            <GifFrame className="gif-frame-4" style={{ top: '310vh', left: '2%' }} offset={25} />
-
-            {/* === AFTER MANIFESTO (340-500vh) - DENSE FILL === */}
-            <GifFrame className="gif-frame-5" style={{ top: '340vh', left: '5%' }} offset={30} />
-            <GifFrame className="gif-frame-6" style={{ top: '340vh', right: '5%' }} offset={35} />
-            <GifFrame className="gif-frame-7" style={{ top: '370vh', left: '15%' }} offset={40} />
-            <GifFrame className="gif-frame-8" style={{ top: '370vh', right: '15%' }} offset={45} />
-            <GifFrame className="gif-frame-9" style={{ top: '400vh', left: '3%' }} offset={50} />
-            <GifFrame className="gif-frame-10" style={{ top: '400vh', right: '3%' }} offset={55} />
-            <GifFrame className="gif-frame-1" style={{ top: '430vh', left: '10%' }} offset={60} />
-            <GifFrame className="gif-frame-2" style={{ top: '430vh', right: '10%' }} offset={65} />
-            <GifFrame className="gif-frame-3" style={{ top: '460vh', left: '2%' }} offset={70} />
-            <GifFrame className="gif-frame-4" style={{ top: '460vh', right: '2%' }} offset={75} />
-            <GifFrame className="gif-frame-5" style={{ top: '460vh', left: '35%' }} offset={80} />
+            {/* === BELOW MANIFESTO (dynamically positioned) === */}
+            <GifFrame className="gif-frame-1" style={{ top: getTopPosition(startOffset), left: '5%' }} offset={0} />
+            <GifFrame className="gif-frame-2" style={{ top: getTopPosition(startOffset), right: '5%' }} offset={5} />
+            <GifFrame className="gif-frame-3" style={{ top: getTopPosition(startOffset + rowSpacing), left: '15%' }} offset={10} />
+            <GifFrame className="gif-frame-4" style={{ top: getTopPosition(startOffset + rowSpacing), right: '15%' }} offset={15} />
+            <GifFrame className="gif-frame-5" style={{ top: getTopPosition(startOffset + rowSpacing * 2), left: '3%' }} offset={20} />
+            <GifFrame className="gif-frame-6" style={{ top: getTopPosition(startOffset + rowSpacing * 2), right: '3%' }} offset={25} />
+            <GifFrame className="gif-frame-7" style={{ top: getTopPosition(startOffset + rowSpacing * 3), left: '10%' }} offset={30} />
+            <GifFrame className="gif-frame-8" style={{ top: getTopPosition(startOffset + rowSpacing * 3), right: '10%' }} offset={35} />
+            <GifFrame className="gif-frame-9" style={{ top: getTopPosition(startOffset + rowSpacing * 4), left: '2%' }} offset={40} />
+            <GifFrame className="gif-frame-10" style={{ top: getTopPosition(startOffset + rowSpacing * 4), right: '2%' }} offset={45} />
+            <GifFrame className="gif-frame-1" style={{ top: getTopPosition(startOffset + rowSpacing * 4), left: '35%' }} offset={50} />
+            <GifFrame className="gif-frame-2" style={{ top: getTopPosition(startOffset + rowSpacing * 5), left: '8%' }} offset={55} />
+            <GifFrame className="gif-frame-3" style={{ top: getTopPosition(startOffset + rowSpacing * 5), right: '8%' }} offset={60} />
+            <GifFrame className="gif-frame-4" style={{ top: getTopPosition(startOffset + rowSpacing * 6), left: '5%' }} offset={65} />
+            <GifFrame className="gif-frame-5" style={{ top: getTopPosition(startOffset + rowSpacing * 6), right: '5%' }} offset={70} />
         </>
     );
 };
