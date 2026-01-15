@@ -703,31 +703,61 @@ body {
 
 /* Individual frame sizes and rotations */
 .gif-frame-1 {
-  width: 280px;
-  height: 220px;
+  width: 420px;
+  height: 340px;
   transform: rotate(5deg);
 }
 
 .gif-frame-2 {
-  width: 240px;
-  height: 180px;
+  width: 380px;
+  height: 300px;
   transform: rotate(-4deg);
 }
 
 .gif-frame-3 {
-  width: 260px;
-  height: 200px;
+  width: 400px;
+  height: 320px;
   transform: rotate(3deg);
 }
 
 .gif-frame-4 {
-  width: 220px;
-  height: 170px;
-  transform: rotate(-6deg);
+  width: 360px;
+  height: 280px;
+  transform: rotate(-5deg);
 }
 
 .gif-frame-5 {
-  width: 250px;
-  height: 190px;
+  width: 390px;
+  height: 310px;
   transform: rotate(4deg);
+}
+
+.gif-frame-6 {
+  width: 370px;
+  height: 290px;
+  transform: rotate(-3deg);
+}
+
+.gif-frame-7 {
+  width: 410px;
+  height: 330px;
+  transform: rotate(6deg);
+}
+
+.gif-frame-8 {
+  width: 350px;
+  height: 270px;
+  transform: rotate(-4deg);
+}
+
+.gif-frame-9 {
+  width: 400px;
+  height: 320px;
+  transform: rotate(3deg);
+}
+
+.gif-frame-10 {
+  width: 380px;
+  height: 300px;
+  transform: rotate(-5deg);
 }
