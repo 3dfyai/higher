@@ -12,21 +12,30 @@ function App() {
   const [manifestoBottomPosition, setManifestoBottomPosition] = useState<number | undefined>(undefined);
 
   useEffect(() => {
+    let ticking = false;
+    
     const handleScroll = () => {
-      const scrolled = window.pageYOffset;
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const scrolled = window.pageYOffset;
 
-      const candle = document.querySelector('.green-candle') as HTMLElement;
-      if (candle) {
-        candle.style.height = (120 + scrolled * 0.05) + 'vh';
-      }
+          const candle = document.querySelector('.green-candle') as HTMLElement;
+          if (candle) {
+            candle.style.height = (120 + scrolled * 0.05) + 'vh';
+          }
 
-      const headline = document.querySelector('.headline-vertical') as HTMLElement;
-      if (headline) {
-        headline.style.transform = `rotate(-90deg) translateX(-100%) translateY(${scrolled * 0.5}px)`;
+          const headline = document.querySelector('.headline-vertical') as HTMLElement;
+          if (headline) {
+            headline.style.transform = `rotate(-90deg) translateX(-100%) translateY(${scrolled * 0.5}px)`;
+          }
+          
+          ticking = false;
+        });
+        ticking = true;
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
 
     return () => {
       window.removeEventListener('scroll', handleScroll);

@@ -96,8 +96,10 @@ Welcome to the ascent. Whether you are new to the journey or a foundational memb
 
     // Calculate and report the bottom position of the manifesto section
     useEffect(() => {
+        if (!onHeightChange) return;
+
         const updateBottomPosition = () => {
-            if (!sectionRef.current || !onHeightChange) return;
+            if (!sectionRef.current) return;
             
             const rect = sectionRef.current.getBoundingClientRect();
             const scrollY = window.scrollY;
@@ -109,22 +111,29 @@ Welcome to the ascent. Whether you are new to the journey or a foundational memb
         // Initial calculation
         updateBottomPosition();
 
-        // Update on resize and scroll
+        // Use ResizeObserver only (more efficient than resize events)
         const resizeObserver = new ResizeObserver(() => {
-            updateBottomPosition();
+            // Throttle ResizeObserver callbacks
+            requestAnimationFrame(updateBottomPosition);
         });
 
         if (sectionRef.current) {
             resizeObserver.observe(sectionRef.current);
         }
 
-        window.addEventListener('resize', updateBottomPosition);
-        window.addEventListener('scroll', updateBottomPosition, { passive: true });
+        // Only listen to resize for window size changes, not scroll
+        let resizeTimeout: NodeJS.Timeout;
+        const throttledResize = () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(updateBottomPosition, 200);
+        };
+
+        window.addEventListener('resize', throttledResize, { passive: true });
 
         return () => {
             resizeObserver.disconnect();
-            window.removeEventListener('resize', updateBottomPosition);
-            window.removeEventListener('scroll', updateBottomPosition);
+            window.removeEventListener('resize', throttledResize);
+            clearTimeout(resizeTimeout);
         };
     }, [onHeightChange, lines.length]);
 
