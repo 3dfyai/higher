@@ -8,6 +8,7 @@ import Footer from './components/Footer';
 import Manifesto from './components/Manifesto';
 import Stats from './components/Stats';
 import HowToBuy from './components/HowToBuy';
+import FloatingTexts from './components/FloatingTexts';
 
 function App() {
   useEffect(() => {
@@ -42,6 +43,7 @@ function App() {
       <BackgroundGrid />
       <Hero />
       <UpdraftGrid />
+      <FloatingTexts />
       <DictionaryCard />
       <svg className="annotation-line" width="600" height="400">
         <path d="M0,0 C150,50 400,-150 500,-400" stroke="#ff3333" fill="transparent" strokeWidth="3" strokeDasharray="5,5" />

@@ -627,3 +627,37 @@ body {
   color: var(--text-secondary);
   line-height: 1.5;
 }
+
+/* 10. Floating Text Blocks */
+.floating-text {
+  position: absolute;
+  max-width: 380px;
+  padding: 30px;
+  z-index: 18;
+}
+
+.floating-text.left {
+  left: 5%;
+}
+
+.floating-text.right {
+  right: 5%;
+  text-align: right;
+}
+
+.floating-text h3 {
+  font-size: 0.85rem;
+  font-weight: 900;
+  color: var(--solana-green);
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  margin-bottom: 15px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.floating-text p {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  font-weight: 400;
+}
