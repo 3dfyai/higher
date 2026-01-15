@@ -1,0 +1,629 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;900&family=JetBrains+Mono:wght@400;700&family=Gloria+Hallelujah&display=swap');
+
+:root {
+  --electric-blue: #3B82F6;
+  --stratosphere-blue: #0A192F;
+  --solana-green: #14F195;
+  --chroma-green: #00FF00;
+  --receipt-bg: #1a1a2e;
+  --card-bg: rgba(20, 20, 40, 0.9);
+  --text-primary: #ffffff;
+  --text-secondary: #a0a0b0;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(180deg, #000000 0%, var(--stratosphere-blue) 30%, #0d1b2a 70%, #1a1a2e 100%);
+  background-attachment: fixed;
+  min-height: 500vh;
+  overflow-x: hidden;
+  color: #fff;
+}
+
+/* Background Grid Pattern */
+.grid-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image:
+    linear-gradient(to right, rgba(128, 128, 128, 0.1) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(128, 128, 128, 0.1) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* 2. Hero Section */
+.hero {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  overflow: hidden;
+}
+
+.hero-video-bg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  min-width: 100%;
+  min-height: 100%;
+  width: auto;
+  height: auto;
+  transform: translate(-50%, -50%);
+  object-fit: cover;
+  z-index: 0;
+}
+
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.4) 0%, rgba(10, 25, 47, 0.7) 100%);
+  z-index: 1;
+}
+
+.headline-vertical {
+  position: absolute;
+  left: 2vw;
+  top: 5vh;
+  font-size: 10vw;
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.9);
+  transform: rotate(-90deg) translateX(-100%);
+  transform-origin: left top;
+  letter-spacing: -0.05em;
+  text-transform: uppercase;
+  z-index: 5;
+  pointer-events: none;
+  transition: transform 0.1s linear;
+}
+
+.green-candle {
+  position: absolute;
+  right: 15%;
+  bottom: 0;
+  width: 140px;
+  height: 120vh;
+  background: linear-gradient(to top, var(--solana-green), #ffffff);
+  box-shadow: 0 0 50px rgba(20, 241, 149, 0.4);
+  z-index: 2;
+}
+
+.green-candle::before {
+  content: '';
+  position: absolute;
+  top: -50px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 150px;
+  background: #fff;
+}
+
+.ticker-cta {
+  position: absolute;
+  top: 45%;
+  right: 20%;
+  background: #ffffff;
+  color: #000;
+  padding: 12px 24px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  box-shadow: 10px 10px 30px rgba(0, 0, 0, 0.3);
+  text-decoration: none;
+  z-index: 10;
+  transition: transform 0.3s ease;
+  animation: float 4s ease-in-out infinite;
+}
+
+.ticker-cta:hover {
+  transform: scale(1.05) translateY(-5px);
+}
+
+.ticker-icon {
+  width: 32px;
+  height: 32px;
+  background: var(--solana-green);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ticker-text b {
+  font-weight: 900;
+  font-size: 1.2rem;
+}
+
+.ticker-text span {
+  display: block;
+  font-size: 0.7rem;
+  font-family: 'JetBrains Mono';
+  opacity: 0.6;
+}
+
+/* 3. Updraft Grid */
+.updraft-container {
+  position: relative;
+  height: 100vh;
+  z-index: 6;
+}
+
+.frame {
+  position: absolute;
+  background: #fff;
+  padding: 15px 15px 40px 15px;
+  box-shadow: 20px 20px 60px rgba(0, 0, 0, 0.2);
+  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.frame:hover {
+  transform: scale(1.02) rotate(0deg) !important;
+  z-index: 20;
+}
+
+.frame-content {
+  background: var(--chroma-green);
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-family: 'JetBrains Mono';
+  font-weight: bold;
+  overflow: hidden;
+  position: relative;
+}
+
+.frame-content::after {
+  content: 'SCANNING...';
+  position: absolute;
+  bottom: 10px;
+  font-size: 10px;
+  opacity: 0.5;
+}
+
+.frame-1 {
+  width: 550px;
+  height: 420px;
+  left: 10%;
+  top: 10%;
+  transform: rotate(5deg);
+}
+
+.frame-2 {
+  width: 400px;
+  height: 320px;
+  right: 15%;
+  top: -5%;
+  transform: rotate(-3deg);
+}
+
+.frame-3 {
+  width: 500px;
+  height: 380px;
+  right: 25%;
+  bottom: 10%;
+  transform: rotate(0deg);
+}
+
+.tape {
+  position: absolute;
+  width: 100px;
+  height: 30px;
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(2px);
+  z-index: 2;
+}
+
+.tape-tl {
+  top: -15px;
+  left: -30px;
+  transform: rotate(-45deg);
+}
+
+.tape-tr {
+  top: -15px;
+  right: -30px;
+  transform: rotate(45deg);
+}
+
+/* 4. Dictionary Section */
+.dictionary-card {
+  position: absolute;
+  left: 50%;
+  top: 150vh;
+  transform: translate(-50%, -50%);
+  background: var(--card-bg);
+  color: var(--text-primary);
+  width: 500px;
+  padding: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.4);
+  z-index: 15;
+  backdrop-filter: blur(10px);
+}
+
+.dictionary-card h2 {
+  font-size: 2.5rem;
+  margin-bottom: 5px;
+}
+
+.dictionary-card .phonetic {
+  font-family: 'JetBrains Mono';
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+}
+
+.dictionary-card .type {
+  font-style: italic;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+  display: block;
+}
+
+.dictionary-card p {
+  line-height: 1.6;
+  font-size: 1.1rem;
+}
+
+.annotation-line {
+  position: absolute;
+  top: 150vh;
+  left: 50%;
+  z-index: 16;
+  pointer-events: none;
+}
+
+/* 5. Tokenomics Receipt */
+.receipt {
+  position: absolute;
+  top: 360vh;
+  right: 5vw;
+  width: 320px;
+  background: var(--card-bg);
+  color: var(--text-primary);
+  padding: 40px 20px;
+  font-family: 'JetBrains Mono', monospace;
+  transform: rotate(-5deg);
+  box-shadow: 15px 15px 40px rgba(0, 0, 0, 0.4);
+  z-index: 25;
+  animation: updraft 6s ease-in-out infinite;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.receipt::after {
+  content: '';
+  position: absolute;
+  bottom: -20px;
+  left: 0;
+  width: 100%;
+  height: 20px;
+  background: var(--receipt-bg);
+  clip-path: polygon(0% 0%, 5% 100%, 10% 0%, 15% 100%, 20% 0%, 25% 100%, 30% 0%, 35% 100%, 40% 0%, 45% 100%, 50% 0%, 55% 100%, 60% 0%, 65% 100%, 70% 0%, 75% 100%, 80% 0%, 85% 100%, 90% 0%, 95% 100%, 100% 0%);
+}
+
+.receipt-header {
+  text-align: center;
+  border-bottom: 1px dashed var(--solana-green);
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+}
+
+.receipt-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+}
+
+.barcode {
+  margin-top: 30px;
+  height: 60px;
+  background: repeating-linear-gradient(90deg, var(--solana-green), var(--solana-green) 2px, transparent 2px, transparent 6px);
+  width: 100%;
+}
+
+/* 6. Footer Clouds */
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 400px;
+  z-index: 30;
+  pointer-events: none;
+}
+
+.cloud-layer {
+  position: absolute;
+  bottom: -50px;
+  width: 100%;
+  fill: var(--stratosphere-blue);
+}
+
+.footer-links {
+  position: absolute;
+  bottom: 80px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 50px;
+  pointer-events: all;
+}
+
+.footer-links a {
+  color: var(--solana-green);
+  text-decoration: none;
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: 1.2rem;
+  transition: letter-spacing 0.3s, color 0.3s;
+}
+
+.footer-links a:hover {
+  letter-spacing: 5px;
+  color: #fff;
+}
+
+.footer-copy {
+  position: absolute;
+  bottom: 20px;
+  width: 100%;
+  text-align: center;
+  color: #999;
+  font-size: 0.7rem;
+  font-family: 'JetBrains Mono';
+}
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes updraft {
+
+  0%,
+  100% {
+    transform: rotate(-5deg) translateY(0);
+  }
+
+  50% {
+    transform: rotate(-7deg) translateY(-30px);
+  }
+}
+
+.handwritten {
+  font-family: 'Gloria Hallelujah', cursive;
+  color: #ff3333;
+  position: absolute;
+  font-size: 1.5rem;
+  transform: rotate(-10deg);
+}
+
+/* 7. Manifesto Section */
+.manifesto-section {
+  position: absolute;
+  top: 170vh;
+  left: 0;
+  right: 0;
+  padding: 100px 10%;
+  z-index: 20;
+}
+
+.manifesto-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.manifesto-title {
+  font-size: 4rem;
+  font-weight: 900;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: -0.03em;
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+.manifesto-title span {
+  color: var(--solana-green);
+}
+
+.manifesto-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.manifesto-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  background: var(--card-bg);
+  padding: 30px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 10px 10px 40px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.manifesto-item:hover {
+  transform: translateY(-5px) scale(1.01);
+  box-shadow: 15px 15px 50px rgba(0, 0, 0, 0.4);
+}
+
+.manifesto-number {
+  font-size: 3rem;
+  font-weight: 900;
+  color: var(--solana-green);
+  font-family: 'JetBrains Mono', monospace;
+  line-height: 1;
+}
+
+.manifesto-text {
+  flex: 1;
+}
+
+.manifesto-text h3 {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.manifesto-text p {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* 8. Stats Section */
+.stats-section {
+  position: absolute;
+  top: 280vh;
+  left: 0;
+  right: 0;
+  padding: 80px 10%;
+  z-index: 20;
+}
+
+.stats-container {
+  display: flex;
+  justify-content: center;
+  gap: 60px;
+  flex-wrap: wrap;
+}
+
+.stat-item {
+  text-align: center;
+  background: var(--card-bg);
+  padding: 40px 50px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 10px 10px 40px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.stat-item:hover {
+  transform: translateY(-10px);
+}
+
+.stat-value {
+  font-size: 3.5rem;
+  font-weight: 900;
+  color: var(--solana-green);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-top: 10px;
+}
+
+/* 9. How To Buy Section */
+.howtobuy-section {
+  position: absolute;
+  top: 320vh;
+  left: 0;
+  right: 0;
+  padding: 80px 10%;
+  z-index: 20;
+}
+
+.howtobuy-container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.howtobuy-title {
+  font-size: 3.5rem;
+  font-weight: 900;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: -0.03em;
+  margin-bottom: 50px;
+  text-align: center;
+}
+
+.howtobuy-title span {
+  color: var(--solana-green);
+}
+
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 30px;
+}
+
+.step-card {
+  background: var(--card-bg);
+  padding: 35px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 10px 10px 40px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.step-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 15px 15px 50px rgba(0, 0, 0, 0.4);
+}
+
+.step-number {
+  width: 60px;
+  height: 60px;
+  background: var(--solana-green);
+  color: var(--stratosphere-blue);
+  font-size: 1.8rem;
+  font-weight: 900;
+  font-family: 'JetBrains Mono', monospace;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+}
+
+.step-card h3 {
+  font-size: 1.3rem;
+  font-weight: 900;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+}
+
+.step-card p {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
