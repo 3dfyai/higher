@@ -434,7 +434,7 @@ body {
 }
 
 .manifesto-container {
-  max-width: 800px;
+  max-width: 900px;
   margin: 0 auto;
 }
 
@@ -444,7 +444,7 @@ body {
   color: var(--text-primary);
   text-transform: uppercase;
   letter-spacing: -0.03em;
-  margin-bottom: 40px;
+  margin-bottom: 60px;
   text-align: center;
 }
 
@@ -452,54 +452,36 @@ body {
   color: var(--solana-green);
 }
 
-.manifesto-list {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
-}
-
-.manifesto-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 20px;
+.manifesto-content {
   background: var(--card-bg);
-  padding: 30px;
-  border-radius: 8px;
+  padding: 60px;
+  border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 10px 10px 40px rgba(0, 0, 0, 0.3);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(10px);
 }
 
-.manifesto-item:hover {
-  transform: translateY(-5px) scale(1.01);
-  box-shadow: 15px 15px 50px rgba(0, 0, 0, 0.4);
-}
-
-.manifesto-number {
-  font-size: 3rem;
-  font-weight: 900;
-  color: var(--solana-green);
-  font-family: 'JetBrains Mono', monospace;
-  line-height: 1;
-}
-
-.manifesto-text {
-  flex: 1;
-}
-
-.manifesto-text h3 {
-  font-size: 1.5rem;
-  font-weight: 900;
-  color: var(--text-primary);
-  margin-bottom: 8px;
-}
-
-.manifesto-text p {
-  font-size: 1rem;
+.manifesto-content p {
+  font-size: 1.25rem;
   color: var(--text-secondary);
-  line-height: 1.6;
+  line-height: 1.9;
+  margin-bottom: 30px;
+}
+
+.manifesto-content p:last-child {
+  margin-bottom: 0;
+}
+
+.manifesto-content .highlight {
+  color: var(--solana-green);
+  font-weight: 700;
+}
+
+.manifesto-content .final-line {
+  font-size: 1.8rem;
+  text-align: center;
+  margin-top: 50px;
+  font-weight: 900;
 }
 
 /* 8. Stats Section */
@@ -631,7 +613,7 @@ body {
 /* 10. Floating Text Blocks */
 .floating-text {
   position: absolute;
-  max-width: 380px;
+  max-width: 450px;
   padding: 30px;
   z-index: 18;
 }
@@ -646,19 +628,19 @@ body {
 }
 
 .floating-text h3 {
-  font-size: 0.85rem;
+  font-size: 1.1rem;
   font-weight: 900;
   color: var(--solana-green);
   text-transform: uppercase;
   letter-spacing: 3px;
-  margin-bottom: 15px;
+  margin-bottom: 18px;
   font-family: 'JetBrains Mono', monospace;
 }
 
 .floating-text p {
-  font-size: 1rem;
-  color: var(--text-secondary);
-  line-height: 1.7;
+  font-size: 1.2rem;
+  color: var(--text-primary);
+  line-height: 1.8;
   font-weight: 400;
 }
 

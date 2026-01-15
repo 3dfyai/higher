@@ -6,8 +6,6 @@ import DictionaryCard from './components/DictionaryCard';
 import TokenomicsReceipt from './components/TokenomicsReceipt';
 import Footer from './components/Footer';
 import Manifesto from './components/Manifesto';
-import Stats from './components/Stats';
-import HowToBuy from './components/HowToBuy';
 import FloatingTexts from './components/FloatingTexts';
 import GifFrames from './components/GifFrames';
 
@@ -51,8 +49,6 @@ function App() {
         <path d="M0,0 C150,50 400,-150 500,-400" stroke="#ff3333" fill="transparent" strokeWidth="3" strokeDasharray="5,5" />
       </svg>
       <Manifesto />
-      <Stats />
-      <HowToBuy />
       <TokenomicsReceipt />
       <Footer />
     </>

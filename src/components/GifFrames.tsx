@@ -54,64 +54,52 @@ const GifFrame: React.FC<GifFrameProps> = ({ className, style, offset = 0 }) => 
 const GifFrames: React.FC = () => {
     return (
         <>
-            {/* Row 1 - Near hero */}
+            {/* Top section - near hero, sides only */}
             <GifFrame
                 className="gif-frame-1"
-                style={{ top: '75vh', right: '5%' }}
+                style={{ top: '70vh', right: '3%' }}
                 offset={0}
             />
             <GifFrame
                 className="gif-frame-2"
-                style={{ top: '85vh', left: '3%' }}
+                style={{ top: '90vh', left: '2%' }}
                 offset={5}
             />
 
-            {/* Row 2 - Early scroll */}
+            {/* Mid section - before manifesto */}
             <GifFrame
                 className="gif-frame-3"
-                style={{ top: '130vh', right: '8%' }}
+                style={{ top: '140vh', right: '4%' }}
                 offset={10}
             />
             <GifFrame
                 className="gif-frame-4"
-                style={{ top: '145vh', left: '5%' }}
+                style={{ top: '155vh', left: '3%' }}
                 offset={15}
             />
 
-            {/* Row 3 - Mid page */}
+            {/* After manifesto section */}
             <GifFrame
                 className="gif-frame-5"
-                style={{ top: '195vh', right: '3%' }}
+                style={{ top: '340vh', right: '3%' }}
                 offset={20}
             />
             <GifFrame
                 className="gif-frame-6"
-                style={{ top: '210vh', left: '6%' }}
+                style={{ top: '370vh', left: '2%' }}
                 offset={25}
             />
 
-            {/* Row 4 - Lower mid */}
+            {/* Near bottom */}
             <GifFrame
                 className="gif-frame-7"
-                style={{ top: '260vh', right: '6%' }}
+                style={{ top: '400vh', right: '4%' }}
                 offset={30}
             />
             <GifFrame
                 className="gif-frame-8"
-                style={{ top: '295vh', left: '4%' }}
+                style={{ top: '430vh', left: '3%' }}
                 offset={35}
-            />
-
-            {/* Row 5 - Near bottom */}
-            <GifFrame
-                className="gif-frame-9"
-                style={{ top: '355vh', right: '4%' }}
-                offset={40}
-            />
-            <GifFrame
-                className="gif-frame-10"
-                style={{ top: '390vh', left: '5%' }}
-                offset={45}
             />
         </>
     );
