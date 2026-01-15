@@ -11,9 +11,9 @@ const TokenomicsReceipt: React.FC = () => {
             <div className="receipt-row"><span>TAX</span> <span>0%</span></div>
             <div className="receipt-row"><span>VIBES</span> <span>MAX</span></div>
             <div className="receipt-row"><span>LP</span> <span>BURNED</span></div>
-            <div className="receipt-row" style={{ marginTop: '20px', fontWeight: 'bold' }}><span>TOTAL</span> <span>HIGHER</span></div>
+            <div className="receipt-row" style={{ marginTop: '20px', fontWeight: 'bold' }}><span>TOTAL</span> <span>ASCEND</span></div>
             <div className="barcode"></div>
-            <p style={{ fontSize: '0.6rem', textAlign: 'center', marginTop: '10px' }}>CA: HIGHER...UP...ONLY</p>
+            <p style={{ fontSize: '0.6rem', textAlign: 'center', marginTop: '10px' }}>CA: ASCEND...UP...ONLY</p>
         </div>
     );
 };

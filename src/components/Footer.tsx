@@ -12,7 +12,7 @@ const Footer: React.FC = () => {
                 <a href="#">Telegram</a>
                 <a href="#">Dexscreener</a>
             </div>
-            <div className="footer-copy">There is no bottom, only Higher.</div>
+            <div className="footer-copy">There is no ceiling. We Ascend.</div>
         </footer>
     );
 };

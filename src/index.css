@@ -70,7 +70,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.4) 0%, rgba(10, 25, 47, 0.7) 100%);
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, rgba(10, 25, 47, 0.4) 100%);
   z-index: 1;
 }
 
@@ -742,4 +742,54 @@ body {
   width: 380px;
   height: 300px;
   transform: rotate(-5deg);
+}
+
+/* Ascending Characters Animation */
+.ascending-container {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  /* Allow characters to pop out of the bar */
+  z-index: 10;
+  pointer-events: none;
+}
+
+.ascending-char {
+  position: absolute;
+  left: 50%;
+  width: 280%;
+  /* Much bigger: ~390px relative to 140px candle */
+  height: auto;
+  transform: translateX(-50%);
+  bottom: -400px;
+  /* Total cycle: 5 chars * 8s ascent + 5s pause = 45s */
+  animation: ascend-sequence 45s linear infinite;
+  filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.6));
+  will-change: transform;
+}
+
+@keyframes ascend-sequence {
+  0% {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+
+  17.77% {
+    /* 8 seconds out of 45s (ascent) */
+    transform: translateX(-50%) translateY(-160vh);
+    opacity: 1;
+  }
+
+  17.78% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-160vh);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(0);
+  }
 }

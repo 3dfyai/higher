@@ -10,23 +10,23 @@ const Hero: React.FC = () => {
                 muted
                 playsInline
             >
-                <source src="/3cee0909fb201b8799aa231909079974.mp4" type="video/mp4" />
+                <source src="/hero_background.mp4" type="video/mp4" />
             </video>
             <div className="hero-overlay"></div>
 
-            <h1 className="headline-vertical">HIGHER</h1>
+            <h1 className="headline-vertical">ASCEND</h1>
 
-            <div className="green-candle"></div>
+            <div className="green-candle">
+                <div className="ascending-container">
+                    <img src="/1.png" className="ascending-char" style={{ animationDelay: '0s' }} alt="" />
+                    <img src="/2.png" className="ascending-char" style={{ animationDelay: '8s' }} alt="" />
+                    <img src="/3.png" className="ascending-char" style={{ animationDelay: '16s' }} alt="" />
+                    <img src="/4.png" className="ascending-char" style={{ animationDelay: '24s' }} alt="" />
+                    <img src="/5.png" className="ascending-char" style={{ animationDelay: '32s' }} alt="" />
+                </div>
+            </div>
 
-            <a href="#" className="ticker-cta">
-                <div className="ticker-icon">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="white"><path d="M12 4l-1.41 1.41L12.17 7H2v2h10.17l-1.58 1.59L12 12l4-4-4-4z" /></svg>
-                </div>
-                <div className="ticker-text">
-                    <span>NEW SIGNAL DETECTED</span>
-                    <b>BUY ON SOLANA</b>
-                </div>
-            </a>
+
         </section>
     );
 };

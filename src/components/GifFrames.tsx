@@ -2,6 +2,22 @@ import { useState, useEffect } from 'react';
 
 const GIPHY_API_KEY = 'GlVGYHkr3WSBnllca54iNt0yFbjz7L65'; // Public beta key
 
+// Hype & Energy Search Terms - Pure Visuals, No Crypto Memes
+const SEARCH_TERMS = [
+    'futuristic city',
+    'cyberpunk aesthetic',
+    'neon lights',
+    'rocket launch',
+    'space travel',
+    'anime power up',
+    'matrix code',
+    'supernova explosion',
+    'glitch art',
+    'victory podium',
+    'gold medal',
+    'mountain summit'
+];
+
 interface GifFrameProps {
     className: string;
     style: React.CSSProperties;
@@ -14,9 +30,12 @@ const GifFrame: React.FC<GifFrameProps> = ({ className, style, offset = 0 }) => 
 
     const fetchGif = async () => {
         try {
+            // Pick a random term
+            const term = SEARCH_TERMS[Math.floor(Math.random() * SEARCH_TERMS.length)];
             const randomOffset = offset + Math.floor(Math.random() * 50);
+
             const response = await fetch(
-                `https://api.giphy.com/v1/gifs/search?api_key=${GIPHY_API_KEY}&q=ascending&limit=1&offset=${randomOffset}&rating=g`
+                `https://api.giphy.com/v1/gifs/search?api_key=${GIPHY_API_KEY}&q=${term}&limit=1&offset=${randomOffset}&rating=g`
             );
             const data = await response.json();
             if (data.data && data.data[0]) {
@@ -31,7 +50,8 @@ const GifFrame: React.FC<GifFrameProps> = ({ className, style, offset = 0 }) => 
 
     useEffect(() => {
         fetchGif();
-        const interval = setInterval(fetchGif, 12000);
+        // Change GIF every 3 seconds
+        const interval = setInterval(fetchGif, 3000);
         return () => clearInterval(interval);
     }, [offset]);
 
@@ -43,7 +63,7 @@ const GifFrame: React.FC<GifFrameProps> = ({ className, style, offset = 0 }) => 
                 {isLoading ? (
                     <span className="gif-loading">LOADING...</span>
                 ) : (
-                    <img src={gifUrl} alt="Higher GIF" />
+                    <img src={gifUrl} alt="Ascend GIF" />
                 )}
             </div>
         </div>
