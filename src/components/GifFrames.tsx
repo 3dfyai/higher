@@ -1,76 +1,29 @@
 import React, { useState, useEffect } from 'react';
 
-const GIPHY_API_KEY = 'GlVGYHkr3WSBnllca54iNt0yFbjz7L65'; // Public beta key
-
-// Space & Psychedelic Search Terms - Strictly Black and White, No Text
-const SEARCH_TERMS = [
-    'space black white',
-    'galaxy black white',
-    'nebula black white',
-    'stars black white',
-    'cosmos black white',
-    'black hole black white',
-    'solar system black white',
-    'milky way black white',
-    'deep space black white',
-    'cosmic black white',
-    'universe black white',
-    'astronomy black white',
-    'psychedelic black white',
-    'trippy black white',
-    'psychedelic art black white',
-    'mandala black white',
-    'fractal black white',
-    'kaleidoscope black white',
-    'abstract black white',
-    'geometric black white',
-    'spiral black white',
-    'hypnotic black white'
+// Specific GIF URLs - Space and Psychedelic Black and White
+const GIF_URLS = [
+    'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExb2xqejRhZzcyZTh4aTRrZ2F1OWQxeHg2ZHgycDhuY2F6Y3p6cGFoOSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/Xd7QqFPv4IVAz8dnog/giphy.gif',
+    'https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3dWF3bHJsOXh3anpsZXhsZzB5Znc3cjBhanhyY3MxZjR6b3FsbTBrNSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/xTiTno2GL7HupVuz84/giphy.gif',
+    'https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3dWF3bHJsOXh3anpsZXhsZzB5Znc3cjBhanhyY3MxZjR6b3FsbTBrNSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/2leAQwrpRXPqUd65ct/giphy.gif',
+    'https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3dWF3bHJsOXh3anpsZXhsZzB5Znc3cjBhanhyY3MxZjR6b3FsbTBrNSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/HZwwVY3r34sj1kgIix/giphy.gif',
+    'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExM2V1NXl4YWVkdmpicDF1MTRubnZyOGFxOHZpMHoydjVwejg4ZjUzbSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/1438GQ24SMwUg0/giphy.gif',
+    'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeGhiNDljdGV1c3F5MzZtY3phbXlvaHByazVzMWFndW9xb3N3NDBxeSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/fxQWkGoNy5eJPEM6rx/giphy.gif',
+    'https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3aWlmc2JyNHdwcHV1aTFtcWEzY3ZyZ3p2ZWNkeTU0Y2Z5ZDdvMWd1MSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/nfh0brn7xRvZ2eCcVO/giphy.gif',
+    'https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3aWlmc2JyNHdwcHV1aTFtcWEzY3ZyZ3p2ZWNkeTU0Y2Z5ZDdvMWd1MSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/dZdPipFYim6ORRaVk1/giphy.gif',
+    'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbG9rNXNtc3B4OGY1N2I1bTZ4ejI0bGM5aHBjcnpveGs0cXJmaGEydiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/vCVbnPl6tZ30c/giphy.gif',
+    'https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3MHhrOGljdTZvcnp5c2hwZWc2bHZxMHFqa2hxZmQwNmJidnVtOGExayZlcD12MV9naWZzX3JlbGF0ZWQmY3Q9Zw/PkKzNQjwPy7GvxZbfe/giphy.gif'
 ];
 
 interface GifFrameProps {
     className: string;
     style: React.CSSProperties;
-    offset?: number;
+    gifIndex: number;
 }
 
-const GifFrame: React.FC<GifFrameProps> = ({ className, style, offset = 0 }) => {
-    const [gifUrl, setGifUrl] = useState<string>('');
-    const [isLoading, setIsLoading] = useState(true);
+const GifFrame: React.FC<GifFrameProps> = ({ className, style, gifIndex }) => {
     const [isVisible, setIsVisible] = useState(false);
     const frameRef = React.useRef<HTMLDivElement>(null);
-
-    const fetchGif = async () => {
-        try {
-            // Pick a random term
-            const term = SEARCH_TERMS[Math.floor(Math.random() * SEARCH_TERMS.length)];
-            const randomOffset = offset + Math.floor(Math.random() * 50);
-
-            const response = await fetch(
-                `https://api.giphy.com/v1/gifs/search?api_key=${GIPHY_API_KEY}&q=${encodeURIComponent(term + ' no text')}&limit=50&offset=${randomOffset}&rating=g`
-            );
-            const data = await response.json();
-            if (data.data && data.data.length > 0) {
-                // Filter for black and white GIFs (check title/tags don't contain color words)
-                const colorWords = ['color', 'colour', 'red', 'blue', 'green', 'yellow', 'purple', 'pink', 'orange'];
-                const filteredGifs = data.data.filter((gif: any) => {
-                    const title = (gif.title || '').toLowerCase();
-                    const tags = (gif.tags || []).join(' ').toLowerCase();
-                    const combined = title + ' ' + tags;
-                    // Prefer GIFs that don't mention colors
-                    return !colorWords.some(word => combined.includes(word));
-                });
-                
-                // Use filtered result or fallback to first result
-                const selectedGif = filteredGifs.length > 0 ? filteredGifs[0] : data.data[0];
-                setGifUrl(selectedGif.images.original.url);
-            }
-            setIsLoading(false);
-        } catch (error) {
-            console.error('Error fetching GIF:', error);
-            setIsLoading(false);
-        }
-    };
+    const gifUrl = GIF_URLS[gifIndex % GIF_URLS.length];
 
     // Lazy load GIFs only when they're about to be visible
     useEffect(() => {
@@ -91,21 +44,12 @@ const GifFrame: React.FC<GifFrameProps> = ({ className, style, offset = 0 }) => 
         return () => observer.disconnect();
     }, [isVisible]);
 
-    useEffect(() => {
-        if (!isVisible) return;
-
-        fetchGif();
-        // Change GIF every 15 seconds (further reduced for performance)
-        const interval = setInterval(fetchGif, 15000);
-        return () => clearInterval(interval);
-    }, [offset, isVisible]);
-
     return (
         <div ref={frameRef} className={`gif-frame ${className}`} style={style}>
             <div className="tape tape-tl"></div>
             <div className="tape tape-tr"></div>
             <div className="gif-frame-content">
-                {!isVisible || isLoading ? (
+                {!isVisible ? (
                     <span className="gif-loading">LOADING...</span>
                 ) : (
                     <img src={gifUrl} alt="Ascend GIF" loading="lazy" />
@@ -191,17 +135,17 @@ const GifFrames: React.FC<GifFramesProps> = ({ manifestoBottomPosition }) => {
 
     return (
         <>
-            {/* === BELOW MANIFESTO (dynamically positioned, reduced to 10 GIFs for performance) === */}
-            <GifFrame className="gif-frame-1" style={{ top: getPosition(0), left: '5%' }} offset={0} />
-            <GifFrame className="gif-frame-2" style={{ top: getPosition(0), right: '5%' }} offset={5} />
-            <GifFrame className="gif-frame-3" style={{ top: getPosition(1), left: '15%' }} offset={10} />
-            <GifFrame className="gif-frame-4" style={{ top: getPosition(1), right: '15%' }} offset={15} />
-            <GifFrame className="gif-frame-5" style={{ top: getPosition(2), left: '3%' }} offset={20} />
-            <GifFrame className="gif-frame-6" style={{ top: getPosition(2), right: '3%' }} offset={25} />
-            <GifFrame className="gif-frame-7" style={{ top: getPosition(3), left: '10%' }} offset={30} />
-            <GifFrame className="gif-frame-8" style={{ top: getPosition(3), right: '10%' }} offset={35} />
-            <GifFrame className="gif-frame-9" style={{ top: getPosition(4), left: '2%' }} offset={40} />
-            <GifFrame className="gif-frame-10" style={{ top: getPosition(4), right: '2%' }} offset={45} />
+            {/* === BELOW MANIFESTO (using specific GIF URLs) === */}
+            <GifFrame className="gif-frame-1" style={{ top: getPosition(0), left: '5%' }} gifIndex={0} />
+            <GifFrame className="gif-frame-2" style={{ top: getPosition(0), right: '5%' }} gifIndex={1} />
+            <GifFrame className="gif-frame-3" style={{ top: getPosition(1), left: '15%' }} gifIndex={2} />
+            <GifFrame className="gif-frame-4" style={{ top: getPosition(1), right: '15%' }} gifIndex={3} />
+            <GifFrame className="gif-frame-5" style={{ top: getPosition(2), left: '3%' }} gifIndex={4} />
+            <GifFrame className="gif-frame-6" style={{ top: getPosition(2), right: '3%' }} gifIndex={5} />
+            <GifFrame className="gif-frame-7" style={{ top: getPosition(3), left: '10%' }} gifIndex={6} />
+            <GifFrame className="gif-frame-8" style={{ top: getPosition(3), right: '10%' }} gifIndex={7} />
+            <GifFrame className="gif-frame-9" style={{ top: getPosition(4), left: '2%' }} gifIndex={8} />
+            <GifFrame className="gif-frame-10" style={{ top: getPosition(4), right: '2%' }} gifIndex={9} />
         </>
     );
 };
