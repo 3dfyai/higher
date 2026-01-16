@@ -2,30 +2,30 @@ import React, { useState, useEffect } from 'react';
 
 const GIPHY_API_KEY = 'GlVGYHkr3WSBnllca54iNt0yFbjz7L65'; // Public beta key
 
-// Space & Psychedelic Search Terms
+// Space & Psychedelic Search Terms - Strictly Black and White, No Text
 const SEARCH_TERMS = [
-    'space',
-    'galaxy',
-    'nebula',
-    'stars',
-    'cosmos',
-    'astronaut',
-    'space travel',
-    'black hole',
-    'solar system',
-    'milky way',
-    'psychedelic',
+    'space black white',
+    'galaxy black white',
+    'nebula black white',
+    'stars black white',
+    'cosmos black white',
+    'black hole black white',
+    'solar system black white',
+    'milky way black white',
+    'deep space black white',
+    'cosmic black white',
+    'universe black white',
+    'astronomy black white',
     'psychedelic black white',
     'trippy black white',
-    'psychedelic art',
+    'psychedelic art black white',
     'mandala black white',
     'fractal black white',
     'kaleidoscope black white',
-    'space nebula',
-    'deep space',
-    'cosmic',
-    'universe',
-    'astronomy'
+    'abstract black white',
+    'geometric black white',
+    'spiral black white',
+    'hypnotic black white'
 ];
 
 interface GifFrameProps {
@@ -47,11 +47,23 @@ const GifFrame: React.FC<GifFrameProps> = ({ className, style, offset = 0 }) => 
             const randomOffset = offset + Math.floor(Math.random() * 50);
 
             const response = await fetch(
-                `https://api.giphy.com/v1/gifs/search?api_key=${GIPHY_API_KEY}&q=${term}&limit=1&offset=${randomOffset}&rating=g`
+                `https://api.giphy.com/v1/gifs/search?api_key=${GIPHY_API_KEY}&q=${encodeURIComponent(term + ' no text')}&limit=50&offset=${randomOffset}&rating=g`
             );
             const data = await response.json();
-            if (data.data && data.data[0]) {
-                setGifUrl(data.data[0].images.original.url);
+            if (data.data && data.data.length > 0) {
+                // Filter for black and white GIFs (check title/tags don't contain color words)
+                const colorWords = ['color', 'colour', 'red', 'blue', 'green', 'yellow', 'purple', 'pink', 'orange'];
+                const filteredGifs = data.data.filter((gif: any) => {
+                    const title = (gif.title || '').toLowerCase();
+                    const tags = (gif.tags || []).join(' ').toLowerCase();
+                    const combined = title + ' ' + tags;
+                    // Prefer GIFs that don't mention colors
+                    return !colorWords.some(word => combined.includes(word));
+                });
+                
+                // Use filtered result or fallback to first result
+                const selectedGif = filteredGifs.length > 0 ? filteredGifs[0] : data.data[0];
+                setGifUrl(selectedGif.images.original.url);
             }
             setIsLoading(false);
         } catch (error) {
