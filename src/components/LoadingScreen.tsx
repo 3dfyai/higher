@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 interface LoadingScreenProps {
     onComplete: () => void;
@@ -7,6 +7,14 @@ interface LoadingScreenProps {
 const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
     const [isExiting, setIsExiting] = useState(false);
     const audioRef = useRef<HTMLAudioElement | null>(null);
+
+    // Prevent scrolling when loading screen is active
+    useEffect(() => {
+        document.body.style.overflow = 'hidden';
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, []);
 
     const handleClick = () => {
         // Play celestial sound effect
@@ -19,6 +27,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
         setIsExiting(true);
         // Wait for fade animation to finish before unmounting
         setTimeout(() => {
+            document.body.style.overflow = '';
             onComplete();
         }, 1200); // Match CSS transition duration (1.2s)
     };
