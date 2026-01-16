@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import BackgroundGrid from './components/BackgroundGrid';
 import Hero from './components/Hero';
-import TokenomicsReceipt from './components/TokenomicsReceipt';
 import Footer from './components/Footer';
 import Manifesto from './components/Manifesto';
 import GifFrames from './components/GifFrames';
@@ -17,16 +16,16 @@ function App() {
     const handleScroll = () => {
       if (rafId === null) {
         rafId = requestAnimationFrame(() => {
-          const scrolled = window.pageYOffset;
+      const scrolled = window.pageYOffset;
 
-          const candle = document.querySelector('.green-candle') as HTMLElement;
-          if (candle) {
-            candle.style.height = (120 + scrolled * 0.05) + 'vh';
-          }
+      const candle = document.querySelector('.green-candle') as HTMLElement;
+      if (candle) {
+        candle.style.height = (120 + scrolled * 0.05) + 'vh';
+      }
 
-          const headline = document.querySelector('.headline-vertical') as HTMLElement;
-          if (headline) {
-            headline.style.transform = `rotate(-90deg) translateX(-100%) translateY(${scrolled * 0.5}px)`;
+      const headline = document.querySelector('.headline-vertical') as HTMLElement;
+      if (headline) {
+        headline.style.transform = `rotate(-90deg) translateX(-100%) translateY(${scrolled * 0.5}px)`;
           }
           
           rafId = null;
@@ -51,7 +50,6 @@ function App() {
       <Hero />
       <Manifesto onHeightChange={setManifestoBottomPosition} />
       <GifFrames manifestoBottomPosition={manifestoBottomPosition} />
-      <TokenomicsReceipt />
       <Footer />
     </>
   );
