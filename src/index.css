@@ -918,6 +918,7 @@ body {
   opacity: 1;
   transition: opacity 1.2s ease-out, transform 1s cubic-bezier(0.4, 0, 0.2, 1);
   pointer-events: all;
+  overflow: hidden;
 }
 
 .loading-screen.slide-up-exit {
@@ -926,17 +927,67 @@ body {
   pointer-events: none;
 }
 
-.loading-video {
+.loading-screen-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  opacity: 1;
-  transition: opacity 1s ease-out;
+  z-index: 1;
 }
 
-.loading-screen.slide-up-exit .loading-video {
-  opacity: 0.8;
+.loading-content {
+  position: absolute;
+  bottom: 10vh;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
+
+.ascend-button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  outline: none;
+}
+
+.ascend-button:hover {
+  transform: scale(1.05);
+}
+
+.ascend-button:active {
+  transform: scale(0.95);
+}
+
+.ascend-button-image {
+  width: auto;
+  height: auto;
+  max-width: 500px;
+  max-height: 500px;
+  width: clamp(300px, 40vw, 500px);
+  height: auto;
+  display: block;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+}
+
 
 /* Cinematic Manifesto - Continuous Stream */
 .typewriter-container {
