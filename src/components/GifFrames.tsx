@@ -2,20 +2,30 @@ import React, { useState, useEffect } from 'react';
 
 const GIPHY_API_KEY = 'GlVGYHkr3WSBnllca54iNt0yFbjz7L65'; // Public beta key
 
-// Hype & Energy Search Terms - Pure Visuals, No Crypto Memes
+// Space & Psychedelic Search Terms
 const SEARCH_TERMS = [
-    'futuristic city',
-    'cyberpunk aesthetic',
-    'neon lights',
-    'rocket launch',
+    'space',
+    'galaxy',
+    'nebula',
+    'stars',
+    'cosmos',
+    'astronaut',
     'space travel',
-    'anime power up',
-    'matrix code',
-    'supernova explosion',
-    'glitch art',
-    'victory podium',
-    'gold medal',
-    'mountain summit'
+    'black hole',
+    'solar system',
+    'milky way',
+    'psychedelic',
+    'psychedelic black white',
+    'trippy black white',
+    'psychedelic art',
+    'mandala black white',
+    'fractal black white',
+    'kaleidoscope black white',
+    'space nebula',
+    'deep space',
+    'cosmic',
+    'universe',
+    'astronomy'
 ];
 
 interface GifFrameProps {
