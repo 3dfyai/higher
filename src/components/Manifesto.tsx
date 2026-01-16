@@ -21,7 +21,6 @@ const Manifesto: React.FC<ManifestoProps> = ({ onHeightChange }) => {
     useEffect(() => {
         // Use IntersectionObserver for each line - appears as soon as it enters viewport
         const observers: IntersectionObserver[] = [];
-        const newVisibleLines = new Set<number>();
 
         lineRefs.current.forEach((lineRef, index) => {
             if (!lineRef) return;
