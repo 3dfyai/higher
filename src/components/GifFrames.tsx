@@ -46,8 +46,6 @@ const GifFrame: React.FC<GifFrameProps> = ({ className, style, gifIndex }) => {
 
     return (
         <div ref={frameRef} className={`gif-frame ${className}`} style={style}>
-            <div className="tape tape-tl"></div>
-            <div className="tape tape-tr"></div>
             <div className="gif-frame-content">
                 {!isVisible ? (
                     <span className="gif-loading">LOADING...</span>
