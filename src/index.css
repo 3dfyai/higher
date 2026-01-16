@@ -392,8 +392,9 @@ body {
   z-index: 20;
   height: auto;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   min-height: 150vh;
 }
 
@@ -407,6 +408,7 @@ body {
   justify-content: center;
   gap: 10vh;
   text-align: center;
+  margin-bottom: 20vh;
 }
 
 .manifesto-line {
@@ -418,8 +420,8 @@ body {
   opacity: 0;
   transform: translate3d(0, 40px, 0) scale(0.95);
   transform-origin: center;
-  transition: opacity 0.6s ease-out,
-              transform 0.6s ease-out;
+  transition: opacity 0.2s ease-out,
+              transform 0.2s ease-out;
   letter-spacing: -0.02em;
   width: 100%;
   max-width: 95%;
@@ -462,6 +464,115 @@ body {
 .manifesto-highlight {
   color: var(--solana-green);
   font-weight: 900;
+}
+
+/* Ascended Image - Below Manifesto Text */
+.ascended-image-container {
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4vw;
+  margin-top: 10vh;
+  z-index: 15;
+  pointer-events: none;
+}
+
+.ascended-image {
+  width: 100%;
+  max-width: 700px;
+  height: auto;
+  object-fit: contain;
+  opacity: 0.95;
+  filter: drop-shadow(0 0 30px rgba(20, 241, 149, 0.3));
+}
+
+/* Token Info Section - Below Ascended Image */
+.token-info-section {
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8vh 4vw 0 4vw;
+  gap: 3vh;
+  z-index: 15;
+}
+
+.token-symbol {
+  font-family: 'Montserrat', sans-serif;
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  font-weight: 900;
+  color: var(--solana-green);
+  text-align: center;
+  letter-spacing: 0.05em;
+  text-shadow: 0 0 20px rgba(20, 241, 149, 0.5);
+}
+
+.ca-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(1rem, 2.5vw, 1.5rem);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.ca-label {
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.ca-value {
+  font-weight: 700;
+  color: var(--solana-green);
+  background: rgba(20, 241, 149, 0.1);
+  padding: 0.5rem 1.5rem;
+  border-radius: 8px;
+  border: 1px solid rgba(20, 241, 149, 0.3);
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.1em;
+}
+
+.social-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 2vh;
+}
+
+.social-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  color: rgba(255, 255, 255, 0.7);
+  transition: all 0.3s ease;
+  border-radius: 50%;
+  background: rgba(20, 241, 149, 0.05);
+  border: 1px solid rgba(20, 241, 149, 0.2);
+}
+
+.social-link:hover {
+  color: var(--solana-green);
+  background: rgba(20, 241, 149, 0.15);
+  border-color: rgba(20, 241, 149, 0.5);
+  transform: translateY(-3px);
+  box-shadow: 0 5px 20px rgba(20, 241, 149, 0.3);
+}
+
+.social-link svg {
+  width: 24px;
+  height: 24px;
 }
 
 /* 8. Stats Section */
