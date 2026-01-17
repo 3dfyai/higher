@@ -14,8 +14,9 @@ function App() {
   // Play background music when site loads (after loading screen)
   useEffect(() => {
     if (!loading) {
-      const audio = new Audio('/website_bgmusic.mp3');
+      const audio = new Audio('/space-ambient-cinematic-348459.mp3');
       audio.loop = true;
+      audio.volume = 0.4; // Set volume to 40% for ambient background music
       audioRef.current = audio;
       audio.play().catch((err) => {
         console.log('Background music play failed:', err);
