@@ -1,31 +1,33 @@
 import React, { useState, useEffect } from 'react';
 
-// Specific GIF URLs - Space and Psychedelic Black and White
-const GIF_URLS = [
-    'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExb2xqejRhZzcyZTh4aTRrZ2F1OWQxeHg2ZHgycDhuY2F6Y3p6cGFoOSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/Xd7QqFPv4IVAz8dnog/giphy.gif',
-    'https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3dWF3bHJsOXh3anpsZXhsZzB5Znc3cjBhanhyY3MxZjR6b3FsbTBrNSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/xTiTno2GL7HupVuz84/giphy.gif',
-    'https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3dWF3bHJsOXh3anpsZXhsZzB5Znc3cjBhanhyY3MxZjR6b3FsbTBrNSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/2leAQwrpRXPqUd65ct/giphy.gif',
-    'https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3dWF3bHJsOXh3anpsZXhsZzB5Znc3cjBhanhyY3MxZjR6b3FsbTBrNSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/HZwwVY3r34sj1kgIix/giphy.gif',
-    'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExM2V1NXl4YWVkdmpicDF1MTRubnZyOGFxOHZpMHoydjVwejg4ZjUzbSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/1438GQ24SMwUg0/giphy.gif',
-    'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeGhiNDljdGV1c3F5MzZtY3phbXlvaHByazVzMWFndW9xb3N3NDBxeSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/fxQWkGoNy5eJPEM6rx/giphy.gif',
-    'https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3aWlmc2JyNHdwcHV1aTFtcWEzY3ZyZ3p2ZWNkeTU0Y2Z5ZDdvMWd1MSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/nfh0brn7xRvZ2eCcVO/giphy.gif',
-    'https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3aWlmc2JyNHdwcHV1aTFtcWEzY3ZyZ3p2ZWNkeTU0Y2Z5ZDdvMWd1MSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/dZdPipFYim6ORRaVk1/giphy.gif',
-    'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbG9rNXNtc3B4OGY1N2I1bTZ4ejI0bGM5aHBjcnpveGs0cXJmaGEydiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/vCVbnPl6tZ30c/giphy.gif',
-    'https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3MHhrOGljdTZvcnp5c2hwZWc2bHZxMHFqa2hxZmQwNmJidnVtOGExayZlcD12MV9naWZzX3JlbGF0ZWQmY3Q9Zw/PkKzNQjwPy7GvxZbfe/giphy.gif'
+// Static image paths
+const IMAGE_PATHS = [
+    '/alon.png',
+    '/Bandit.png',
+    '/cented.png',
+    '/clukz.png',
+    '/cupsey.png',
+    '/daumen.png',
+    '/duvall.png',
+    '/gake.png',
+    '/jijo2.png',
+    '/joji.png',
+    '/mitch.png'
 ];
 
-interface GifFrameProps {
+interface ImageFrameProps {
     className: string;
     style: React.CSSProperties;
-    gifIndex: number;
+    imageIndex: number;
+    onImageClick: (imagePath: string) => void;
 }
 
-const GifFrame: React.FC<GifFrameProps> = ({ className, style, gifIndex }) => {
+const ImageFrame: React.FC<ImageFrameProps> = ({ className, style, imageIndex, onImageClick }) => {
     const [isVisible, setIsVisible] = useState(false);
     const frameRef = React.useRef<HTMLDivElement>(null);
-    const gifUrl = GIF_URLS[gifIndex % GIF_URLS.length];
+    const imagePath = IMAGE_PATHS[imageIndex % IMAGE_PATHS.length];
 
-    // Lazy load GIFs only when they're about to be visible
+    // Lazy load images only when they're about to be visible
     useEffect(() => {
         if (!frameRef.current) return;
 
@@ -44,13 +46,19 @@ const GifFrame: React.FC<GifFrameProps> = ({ className, style, gifIndex }) => {
         return () => observer.disconnect();
     }, [isVisible]);
 
+    const handleClick = () => {
+        if (isVisible) {
+            onImageClick(imagePath);
+        }
+    };
+
     return (
         <div ref={frameRef} className={`gif-frame ${className}`} style={style}>
-            <div className="gif-frame-content">
+            <div className="gif-frame-content" onClick={handleClick}>
                 {!isVisible ? (
                     <span className="gif-loading">LOADING...</span>
                 ) : (
-                    <img src={gifUrl} alt="Ascend GIF" loading="lazy" />
+                    <img src={imagePath} alt="Character" loading="lazy" className="clickable-image" />
                 )}
             </div>
         </div>
@@ -64,6 +72,7 @@ interface GifFramesProps {
 const GifFrames: React.FC<GifFramesProps> = ({ manifestoBottomPosition }) => {
     const [windowHeight, setWindowHeight] = useState<number>(typeof window !== 'undefined' ? window.innerHeight : 1080);
     const [gifPositions, setGifPositions] = useState<Record<number, string>>({});
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
     useEffect(() => {
         const handleResize = () => {
@@ -92,7 +101,7 @@ const GifFrames: React.FC<GifFramesProps> = ({ manifestoBottomPosition }) => {
         const startOffset = 10;
         const positions: Record<number, string> = {};
 
-        // Calculate all positions once
+        // Calculate all positions once (6 rows for 11 images)
         const offsets = [
             startOffset,
             startOffset + rowSpacing,
@@ -100,7 +109,6 @@ const GifFrames: React.FC<GifFramesProps> = ({ manifestoBottomPosition }) => {
             startOffset + rowSpacing * 3,
             startOffset + rowSpacing * 4,
             startOffset + rowSpacing * 5,
-            startOffset + rowSpacing * 6,
         ];
 
         offsets.forEach((offsetVh, index) => {
@@ -131,19 +139,53 @@ const GifFrames: React.FC<GifFramesProps> = ({ manifestoBottomPosition }) => {
         return getTopPosition(startOffset + rowSpacing * rowIndex);
     };
 
+    const handleImageClick = (imagePath: string) => {
+        setSelectedImage(imagePath);
+        document.body.style.overflow = 'hidden';
+    };
+
+    const handleCloseModal = () => {
+        setSelectedImage(null);
+        document.body.style.overflow = '';
+    };
+
+    // Close modal on Escape key
+    useEffect(() => {
+        const handleEscape = (e: KeyboardEvent) => {
+            if (e.key === 'Escape' && selectedImage) {
+                handleCloseModal();
+            }
+        };
+        window.addEventListener('keydown', handleEscape);
+        return () => window.removeEventListener('keydown', handleEscape);
+    }, [selectedImage]);
+
     return (
         <>
-            {/* === BELOW MANIFESTO (using specific GIF URLs) === */}
-            <GifFrame className="gif-frame-1" style={{ top: getPosition(0), left: '5%' }} gifIndex={0} />
-            <GifFrame className="gif-frame-2" style={{ top: getPosition(0), right: '5%' }} gifIndex={1} />
-            <GifFrame className="gif-frame-3" style={{ top: getPosition(1), left: '15%' }} gifIndex={2} />
-            <GifFrame className="gif-frame-4" style={{ top: getPosition(1), right: '15%' }} gifIndex={3} />
-            <GifFrame className="gif-frame-5" style={{ top: getPosition(2), left: '3%' }} gifIndex={4} />
-            <GifFrame className="gif-frame-6" style={{ top: getPosition(2), right: '3%' }} gifIndex={5} />
-            <GifFrame className="gif-frame-7" style={{ top: getPosition(3), left: '10%' }} gifIndex={6} />
-            <GifFrame className="gif-frame-8" style={{ top: getPosition(3), right: '10%' }} gifIndex={7} />
-            <GifFrame className="gif-frame-9" style={{ top: getPosition(4), left: '2%' }} gifIndex={8} />
-            <GifFrame className="gif-frame-10" style={{ top: getPosition(4), right: '2%' }} gifIndex={9} />
+            {/* === BELOW MANIFESTO (using static images) === */}
+            <ImageFrame className="gif-frame-1" style={{ top: getPosition(0), left: '5%' }} imageIndex={0} onImageClick={handleImageClick} />
+            <ImageFrame className="gif-frame-2" style={{ top: getPosition(0), right: '5%' }} imageIndex={1} onImageClick={handleImageClick} />
+            <ImageFrame className="gif-frame-3" style={{ top: getPosition(1), left: '15%' }} imageIndex={2} onImageClick={handleImageClick} />
+            <ImageFrame className="gif-frame-4" style={{ top: getPosition(1), right: '15%' }} imageIndex={3} onImageClick={handleImageClick} />
+            <ImageFrame className="gif-frame-5" style={{ top: getPosition(2), left: '3%' }} imageIndex={4} onImageClick={handleImageClick} />
+            <ImageFrame className="gif-frame-6" style={{ top: getPosition(2), right: '3%' }} imageIndex={5} onImageClick={handleImageClick} />
+            <ImageFrame className="gif-frame-7" style={{ top: getPosition(3), left: '10%' }} imageIndex={6} onImageClick={handleImageClick} />
+            <ImageFrame className="gif-frame-8" style={{ top: getPosition(3), right: '10%' }} imageIndex={7} onImageClick={handleImageClick} />
+            <ImageFrame className="gif-frame-9" style={{ top: getPosition(4), left: '2%' }} imageIndex={8} onImageClick={handleImageClick} />
+            <ImageFrame className="gif-frame-10" style={{ top: getPosition(4), right: '2%' }} imageIndex={9} onImageClick={handleImageClick} />
+            <ImageFrame className="gif-frame-11 gif-frame-center" style={{ top: getPosition(5), left: '50%' }} imageIndex={10} onImageClick={handleImageClick} />
+
+            {/* Image Modal/Lightbox */}
+            {selectedImage && (
+                <div className="image-modal-overlay" onClick={handleCloseModal}>
+                    <div className="image-modal-content" onClick={(e) => e.stopPropagation()}>
+                        <button className="image-modal-close" onClick={handleCloseModal} aria-label="Close">
+                            ×
+                        </button>
+                        <img src={selectedImage} alt="Character" className="image-modal-image" />
+                    </div>
+                </div>
+            )}
         </>
     );
 };

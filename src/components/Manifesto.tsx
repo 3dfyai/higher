@@ -7,7 +7,6 @@ interface ManifestoProps {
 const Manifesto: React.FC<ManifestoProps> = ({ onHeightChange }) => {
     const [lineStates, setLineStates] = useState<Map<number, string>>(new Map());
     const [currentTypingLine, setCurrentTypingLine] = useState<number>(-1);
-    const [hasStarted, setHasStarted] = useState(false);
     const [isTypingComplete, setIsTypingComplete] = useState(false);
     const [visibleElements, setVisibleElements] = useState<Set<string>>(new Set());
     const lineRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -15,9 +14,7 @@ const Manifesto: React.FC<ManifestoProps> = ({ onHeightChange }) => {
     const imageRef = useRef<HTMLDivElement>(null);
     const tokenInfoRef = useRef<HTMLDivElement>(null);
     const timeoutRefs = useRef<Map<number, ReturnType<typeof setTimeout>>>(new Map());
-    const autoScrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-    const scrollLockPositionRef = useRef<number>(0);
-    const isScrollingRef = useRef<boolean>(false);
+    const startedTypingRef = useRef<Set<number>>(new Set());
 
     const lines = [
         "Ascend is not merely a direction—it is a continuous state of being.",
@@ -30,6 +27,23 @@ const Manifesto: React.FC<ManifestoProps> = ({ onHeightChange }) => {
 
     // Type a single line character by character
     const typeLine = (lineIndex: number) => {
+        // Prevent retyping if already started
+        if (startedTypingRef.current.has(lineIndex)) {
+            return;
+        }
+        
+        // Check if previous line is completed (unless it's the first line)
+        if (lineIndex > 0) {
+            const prevLineText = lineStates.get(lineIndex - 1) || '';
+            const prevLineFull = lines[lineIndex - 1];
+            if (prevLineText.length < prevLineFull.length) {
+                // Previous line not complete, don't start typing yet
+                return;
+            }
+        }
+        
+        startedTypingRef.current.add(lineIndex);
+        
         const fullText = lines[lineIndex];
         let charIndex = 0;
         
@@ -55,82 +69,13 @@ const Manifesto: React.FC<ManifestoProps> = ({ onHeightChange }) => {
                     timeoutRefs.current.set(lineIndex, timeout);
                     charIndex++;
                 } else {
-                    // Line complete - auto-scroll and start next line
+                    // Line complete
                     timeoutRefs.current.delete(lineIndex);
+                    setCurrentTypingLine(-1);
                     
                     // Check if all lines are complete
-                    const allComplete = lineIndex === lines.length - 1;
-                    
-                    if (allComplete) {
-                        // All typing complete - unlock scrolling
+                    if (lineIndex === lines.length - 1) {
                         setIsTypingComplete(true);
-                        setCurrentTypingLine(-1);
-                        
-                        setTimeout(() => {
-                            // Restore scroll position and unlock smoothly
-                            const savedScroll = scrollLockPositionRef.current;
-                            
-                            // Use requestAnimationFrame to ensure smooth transition
-                            requestAnimationFrame(() => {
-                                // Restore body styles
-                                document.body.style.overflow = '';
-                                document.body.style.position = '';
-                                document.body.style.top = '';
-                                document.body.style.left = '';
-                                document.body.style.right = '';
-                                document.body.style.width = '';
-                                document.documentElement.style.scrollBehavior = '';
-                                
-                                // Restore scroll position without smooth to prevent layout shift
-                                window.scrollTo({
-                                    top: savedScroll,
-                                    behavior: 'auto'
-                                });
-                            });
-                        }, 100);
-                    } else {
-                        // Auto-scroll to next line and start typing
-                        const nextLineIndex = lineIndex + 1;
-                        const nextLineRef = lineRefs.current[nextLineIndex];
-                        
-                        if (nextLineRef) {
-                            // Calculate target scroll position
-                            const rect = nextLineRef.getBoundingClientRect();
-                            const targetOffset = rect.top - (window.innerHeight * 0.4);
-                            
-                            // Enable smooth scrolling temporarily
-                            isScrollingRef.current = true;
-                            
-                            // Smoothly update scroll position
-                            const startPosition = scrollLockPositionRef.current;
-                            const distance = targetOffset;
-                            const duration = 600; // 600ms smooth scroll
-                            const startTime = performance.now();
-                            
-                            const animateScroll = (currentTime: number) => {
-                                const elapsed = currentTime - startTime;
-                                const progress = Math.min(elapsed / duration, 1);
-                                
-                                // Easing function for smooth scroll
-                                const ease = 1 - Math.pow(1 - progress, 3);
-                                const currentOffset = startPosition + (distance * ease);
-                                
-                                scrollLockPositionRef.current = currentOffset;
-                                document.body.style.top = `-${currentOffset}px`;
-                                
-                                if (progress < 1) {
-                                    requestAnimationFrame(animateScroll);
-                                } else {
-                                    isScrollingRef.current = false;
-                                    // Start typing next line
-                                    setCurrentTypingLine(nextLineIndex);
-                                }
-                            };
-                            
-                            requestAnimationFrame(animateScroll);
-                        } else {
-                            setCurrentTypingLine(-1);
-                        }
                     }
                 }
             }
@@ -160,73 +105,51 @@ const Manifesto: React.FC<ManifestoProps> = ({ onHeightChange }) => {
         };
     }, [currentTypingLine]);
 
-    // Prevent scroll events when locked
+    // Use IntersectionObserver to trigger typing for each line on scroll
     useEffect(() => {
-        if (!hasStarted || isTypingComplete) return;
+        const observers: IntersectionObserver[] = [];
 
-        const preventWheel = (e: WheelEvent) => {
-            if (!isScrollingRef.current) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-        };
+        lineRefs.current.forEach((lineRef, index) => {
+            if (!lineRef) return;
 
-        const preventTouch = (e: TouchEvent) => {
-            if (!isScrollingRef.current) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-        };
+            const observer = new IntersectionObserver(
+                (entries) => {
+                    entries.forEach((entry) => {
+                        if (entry.isIntersecting) {
+                            // Only start typing if:
+                            // 1. Not already typing another line
+                            // 2. Not already started this line
+                            // 3. It's the first line (index 0), OR previous line is completed
+                            if (currentTypingLine !== -1 || startedTypingRef.current.has(index)) {
+                                return;
+                            }
+                            
+                            const canStart = index === 0 || (() => {
+                                const prevLineText = lineStates.get(index - 1) || '';
+                                const prevLineFull = lines[index - 1];
+                                return prevLineText.length === prevLineFull.length;
+                            })();
 
-        window.addEventListener('wheel', preventWheel, { passive: false });
-        window.addEventListener('touchmove', preventTouch, { passive: false });
+                            if (canStart) {
+                                setCurrentTypingLine(index);
+                            }
+                        }
+                    });
+                },
+                {
+                    rootMargin: '0px 0px -30% 0px', // Trigger when line is 30% from bottom of viewport
+                    threshold: 0.3
+                }
+            );
+
+            observer.observe(lineRef);
+            observers.push(observer);
+        });
 
         return () => {
-            window.removeEventListener('wheel', preventWheel);
-            window.removeEventListener('touchmove', preventTouch);
+            observers.forEach(obs => obs.disconnect());
         };
-    }, [hasStarted, isTypingComplete]);
-
-    // Show all lines instantly when section comes into view, lock scrolling, and start typing
-    useEffect(() => {
-        if (!sectionRef.current || hasStarted) return;
-
-        const observer = new IntersectionObserver(
-            (entries) => {
-                entries.forEach((entry) => {
-                    if (entry.isIntersecting && !hasStarted) {
-                        setHasStarted(true);
-                        
-                        // Save current scroll position
-                        scrollLockPositionRef.current = window.scrollY || document.documentElement.scrollTop;
-                        
-                        // Lock scrolling smoothly
-                        document.body.style.overflow = 'hidden';
-                        document.body.style.position = 'fixed';
-                        document.body.style.top = `-${scrollLockPositionRef.current}px`;
-                        document.body.style.left = '0';
-                        document.body.style.right = '0';
-                        document.body.style.width = '100%';
-                        
-                        // Start typing first line after a brief delay
-                        setTimeout(() => {
-                            setCurrentTypingLine(0);
-                        }, 300);
-                    }
-                });
-            },
-            {
-                rootMargin: '0px 0px -20% 0px',
-                threshold: 0.1
-            }
-        );
-
-        observer.observe(sectionRef.current);
-
-        return () => {
-            observer.disconnect();
-        };
-    }, [hasStarted]);
+    }, [lineStates, currentTypingLine]);
 
     // Scroll-triggered reveals for elements below text (after typing completes)
     useEffect(() => {
@@ -273,13 +196,11 @@ const Manifesto: React.FC<ManifestoProps> = ({ onHeightChange }) => {
     // Cleanup on unmount
     useEffect(() => {
         return () => {
-            // Re-enable scrolling if component unmounts
-            document.body.style.overflow = '';
-            document.body.style.position = '';
-            document.body.style.width = '';
-            if (autoScrollTimeoutRef.current) {
-                clearTimeout(autoScrollTimeoutRef.current);
-            }
+            // Cleanup all timeouts
+            timeoutRefs.current.forEach((timeout) => {
+                clearTimeout(timeout);
+            });
+            timeoutRefs.current.clear();
         };
     }, []);
 
@@ -342,8 +263,6 @@ const Manifesto: React.FC<ManifestoProps> = ({ onHeightChange }) => {
                     const typedText = lineStates.get(index) || '';
                     const isTyping = index === currentTypingLine;
                     const isCompleted = typedText.length === line.length && typedText.length > 0;
-                    // Show line container immediately when section is visible, but text types on scroll
-                    const isVisible = hasStarted; // All lines visible once section is in view
                     const displayText = isCompleted ? line : typedText;
 
                     return (
@@ -352,7 +271,7 @@ const Manifesto: React.FC<ManifestoProps> = ({ onHeightChange }) => {
                             ref={(el) => {
                                 lineRefs.current[index] = el;
                             }}
-                            className={`manifesto-line manifesto-line-${index} ${isVisible ? 'manifesto-line-visible' : ''} ${isCompleted ? 'manifesto-line-completed' : ''} ${isTyping ? 'manifesto-line-typing' : ''}`}
+                            className={`manifesto-line manifesto-line-${index} manifesto-line-visible ${isCompleted ? 'manifesto-line-completed' : ''} ${isTyping ? 'manifesto-line-typing' : ''}`}
                         >
                             <span className="manifesto-text">
                                 {displayText ? highlightWord(displayText) : '\u00A0'}
