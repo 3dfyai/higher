@@ -97,7 +97,6 @@ const Manifesto: React.FC<ManifestoProps> = ({ onHeightChange }) => {
                             // Calculate target scroll position
                             const rect = nextLineRef.getBoundingClientRect();
                             const targetOffset = rect.top - (window.innerHeight * 0.4);
-                            const newScrollPosition = scrollLockPositionRef.current + targetOffset;
                             
                             // Enable smooth scrolling temporarily
                             isScrollingRef.current = true;
@@ -165,21 +164,26 @@ const Manifesto: React.FC<ManifestoProps> = ({ onHeightChange }) => {
     useEffect(() => {
         if (!hasStarted || isTypingComplete) return;
 
-        const preventScroll = (e: WheelEvent | TouchEvent) => {
+        const preventWheel = (e: WheelEvent) => {
             if (!isScrollingRef.current) {
                 e.preventDefault();
                 e.stopPropagation();
             }
         };
 
-        window.addEventListener('wheel', preventScroll, { passive: false });
-        window.addEventListener('touchmove', preventScroll, { passive: false });
-        document.addEventListener('scroll', preventScroll, { passive: false });
+        const preventTouch = (e: TouchEvent) => {
+            if (!isScrollingRef.current) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        };
+
+        window.addEventListener('wheel', preventWheel, { passive: false });
+        window.addEventListener('touchmove', preventTouch, { passive: false });
 
         return () => {
-            window.removeEventListener('wheel', preventScroll);
-            window.removeEventListener('touchmove', preventScroll);
-            document.removeEventListener('scroll', preventScroll);
+            window.removeEventListener('wheel', preventWheel);
+            window.removeEventListener('touchmove', preventTouch);
         };
     }, [hasStarted, isTypingComplete]);
 
