@@ -19,10 +19,10 @@ const Hero: React.FC = () => {
             <div className="green-candle">
                 <div className="ascending-container">
                     <img src="/1.png" className="ascending-char" style={{ animationDelay: '0s' }} alt="" />
-                    <img src="/2.png" className="ascending-char" style={{ animationDelay: '8s' }} alt="" />
-                    <img src="/3.png" className="ascending-char" style={{ animationDelay: '16s' }} alt="" />
-                    <img src="/4.png" className="ascending-char" style={{ animationDelay: '24s' }} alt="" />
-                    <img src="/5.png" className="ascending-char" style={{ animationDelay: '32s' }} alt="" />
+                    <img src="/2.png" className="ascending-char" style={{ animationDelay: '7.9s' }} alt="" />
+                    <img src="/3.png" className="ascending-char" style={{ animationDelay: '15.8s' }} alt="" />
+                    <img src="/4.png" className="ascending-char" style={{ animationDelay: '23.7s' }} alt="" />
+                    <img src="/5.png" className="ascending-char" style={{ animationDelay: '31.6s' }} alt="" />
                 </div>
             </div>
 

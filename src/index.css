@@ -966,8 +966,8 @@ body {
   height: auto;
   transform: translateX(-50%);
   bottom: -400px;
-  /* Total cycle: 5 chars * 8s ascent + 5s pause = 45s */
-  animation: ascend-sequence 45s linear infinite;
+  /* Total cycle: 5 chars * 8s ascent = 40s (no pause) */
+  animation: ascend-sequence 40s linear infinite;
   filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.6));
   will-change: transform;
 }
@@ -978,18 +978,20 @@ body {
     opacity: 1;
   }
 
-  17.77% {
-    /* 8 seconds out of 45s (ascent) */
+  20% {
+    /* 8 seconds out of 40s (ascent completes) */
     transform: translateX(-50%) translateY(-160vh);
     opacity: 1;
   }
 
-  17.78% {
+  20.01% {
+    /* Immediately disappear and reset */
     opacity: 0;
-    transform: translateX(-50%) translateY(-160vh);
+    transform: translateX(-50%) translateY(0);
   }
 
   100% {
+    /* Stay invisible until next cycle */
     opacity: 0;
     transform: translateX(-50%) translateY(0);
   }
