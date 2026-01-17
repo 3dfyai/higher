@@ -36,30 +36,45 @@ const Manifesto: React.FC<ManifestoProps> = ({ onHeightChange }) => {
                 
                 if (charIndex < fullText.length) {
                     const char = fullText[charIndex];
-                    // Variable delays for cinematic effect
-                    let delay = 40; // Base speed
+                    // Faster typing speed
+                    let delay = 20; // Base speed - much faster
                     
-                    if (char === '.') delay = 200; // Dramatic pause at periods
-                    else if (char === ',') delay = 120;
-                    else if (char === '—' || char === '–') delay = 150;
-                    else if (char === ' ') delay = 25;
+                    if (char === '.') delay = 80; // Shorter pause at periods
+                    else if (char === ',') delay = 50;
+                    else if (char === '—' || char === '–') delay = 60;
+                    else if (char === ' ') delay = 15;
                     
                     const timeout = setTimeout(typeNextChar, delay);
                     timeoutRefs.current.set(lineIndex, timeout);
                     charIndex++;
                 } else {
-                    // Line complete - start next line after pause
+                    // Line complete - check for next line that's scrolled into view
                     timeoutRefs.current.delete(lineIndex);
+                    setCurrentTypingLine(-1);
                     
-                    if (lineIndex < lines.length - 1) {
-                        // Dramatic pause before next line
-                        const pauseTimeout = setTimeout(() => {
-                            setCurrentTypingLine(lineIndex + 1);
-                        }, 1000); // 1 second pause between lines
-                        timeoutRefs.current.set(-1, pauseTimeout);
-                    } else {
-                        setCurrentTypingLine(-1); // All done
-                    }
+                    // Check if any line is ready to type (has scrolled into view)
+                    const checkNextLine = () => {
+                        for (let i = 0; i < lines.length; i++) {
+                            const lineRef = lineRefs.current[i];
+                            const lineText = lineStates.get(i) || '';
+                            const isCompleted = lineText.length === lines[i].length && lineText.length > 0;
+                            
+                            // If line hasn't been typed yet and is in view
+                            if (lineRef && !isCompleted && lineText.length === 0) {
+                                const rect = lineRef.getBoundingClientRect();
+                                const windowHeight = window.innerHeight;
+                                // If line is in viewport
+                                if (rect.top < windowHeight * 0.7 && rect.bottom > windowHeight * 0.3) {
+                                    setCurrentTypingLine(i);
+                                    return;
+                                }
+                            }
+                        }
+                    };
+                    
+                    // Small delay before checking next line
+                    const pauseTimeout = setTimeout(checkNextLine, 200);
+                    timeoutRefs.current.set(-1, pauseTimeout);
                 }
             }
         };
@@ -67,7 +82,7 @@ const Manifesto: React.FC<ManifestoProps> = ({ onHeightChange }) => {
         // Small delay before starting to type
         const startTimeout = setTimeout(() => {
             typeNextChar();
-        }, 400);
+        }, 150);
         timeoutRefs.current.set(lineIndex, startTimeout);
     };
 
@@ -88,7 +103,7 @@ const Manifesto: React.FC<ManifestoProps> = ({ onHeightChange }) => {
         };
     }, [currentTypingLine]);
 
-    // Trigger start when section comes into view
+    // Show all lines instantly when section comes into view, then type as user scrolls
     useEffect(() => {
         if (!sectionRef.current || hasStarted) return;
 
@@ -97,10 +112,8 @@ const Manifesto: React.FC<ManifestoProps> = ({ onHeightChange }) => {
                 entries.forEach((entry) => {
                     if (entry.isIntersecting && !hasStarted) {
                         setHasStarted(true);
-                        // Start cinematic sequence
-                        setTimeout(() => {
-                            setCurrentTypingLine(0);
-                        }, 600);
+                        // Make all lines visible instantly (but empty)
+                        // Lines will type individually as they scroll into view
                     }
                 });
             },
@@ -114,10 +127,53 @@ const Manifesto: React.FC<ManifestoProps> = ({ onHeightChange }) => {
 
         return () => {
             observer.disconnect();
-            timeoutRefs.current.forEach(timeout => clearTimeout(timeout));
-            timeoutRefs.current.clear();
         };
     }, [hasStarted]);
+
+    // Individual line observers - trigger typing as each line scrolls into view
+    useEffect(() => {
+        if (!hasStarted) return;
+
+        const observers: IntersectionObserver[] = [];
+        const startedTyping = new Set<number>();
+
+        lineRefs.current.forEach((lineRef, index) => {
+            if (!lineRef) return;
+
+            const observer = new IntersectionObserver(
+                (entries) => {
+                    entries.forEach((entry) => {
+                        if (entry.isIntersecting) {
+                            const lineText = lineStates.get(index) || '';
+                            const isCompleted = lineText.length === lines[index].length && lineText.length > 0;
+                            
+                            // Only start typing if line hasn't been typed yet and isn't currently typing
+                            if (!isCompleted && !startedTyping.has(index) && currentTypingLine !== index) {
+                                startedTyping.add(index);
+                                
+                                // If no line is currently typing, start this one
+                                if (currentTypingLine === -1) {
+                                    setCurrentTypingLine(index);
+                                }
+                                // Otherwise, it will start when current line finishes
+                            }
+                        }
+                    });
+                },
+                {
+                    rootMargin: '0px 0px -30% 0px',
+                    threshold: 0.2
+                }
+            );
+
+            observer.observe(lineRef);
+            observers.push(observer);
+        });
+
+        return () => {
+            observers.forEach(obs => obs.disconnect());
+        };
+    }, [hasStarted, currentTypingLine, lineStates, lines]);
 
     // Calculate and report the bottom position of the manifesto section
     useEffect(() => {
@@ -178,7 +234,8 @@ const Manifesto: React.FC<ManifestoProps> = ({ onHeightChange }) => {
                     const typedText = lineStates.get(index) || '';
                     const isTyping = index === currentTypingLine;
                     const isCompleted = typedText.length === line.length && typedText.length > 0;
-                    const isVisible = isTyping || isCompleted;
+                    // Show line container immediately when section is visible, but text types on scroll
+                    const isVisible = hasStarted; // All lines visible once section is in view
                     const displayText = isCompleted ? line : typedText;
 
                     return (
@@ -214,24 +271,13 @@ const Manifesto: React.FC<ManifestoProps> = ({ onHeightChange }) => {
                 </div>
                 <div className="social-links">
                     <a href="#" className="social-link" aria-label="Pumpfun">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                            <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                            <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
+                        <img src="/PUMPFUN.png" alt="Pumpfun" className="social-logo" />
                     </a>
                     <a href="#" className="social-link" aria-label="DexScreener">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2"/>
-                            <path d="M9 9H15V15H9V9Z" stroke="currentColor" strokeWidth="2"/>
-                            <path d="M3 12H21" stroke="currentColor" strokeWidth="2"/>
-                            <path d="M12 3V21" stroke="currentColor" strokeWidth="2"/>
-                        </svg>
+                        <img src="/DEXSCREENER.png" alt="DexScreener" className="social-logo" />
                     </a>
                     <a href="#" className="social-link" aria-label="X (Twitter)">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" fill="currentColor"/>
-                        </svg>
+                        <img src="/X.png" alt="X" className="social-logo" />
                     </a>
                 </div>
             </div>

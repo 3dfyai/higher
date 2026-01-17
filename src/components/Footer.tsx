@@ -8,9 +8,6 @@ const Footer: React.FC = () => {
                 <path d="M0,280L120,260C240,240,480,200,720,210C960,220,1200,280,1320,310L1440,340L1440,320L1320,320C1200,320,960,320,720,320C480,320,240,320,120,320L0,320Z" opacity="0.5"></path>
             </svg>
             <div className="footer-links">
-                <a href="#">Twitter</a>
-                <a href="#">Telegram</a>
-                <a href="#">Dexscreener</a>
             </div>
             <div className="footer-copy">There is no ceiling. We Ascend.</div>
         </footer>
