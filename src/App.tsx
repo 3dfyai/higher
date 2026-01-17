@@ -6,6 +6,27 @@ import Manifesto from './components/Manifesto';
 import GifFrames from './components/GifFrames';
 import LoadingScreen from './components/LoadingScreen';
 
+// Preload character images immediately
+const CHARACTER_IMAGES = [
+  '/alon.png',
+  '/Bandit.png',
+  '/cented.png',
+  '/clukz.png',
+  '/cupsey.png',
+  '/daumen.png',
+  '/duvall.png',
+  '/gake.png',
+  '/jijo2.png',
+  '/joji.png',
+  '/mitch.png'
+];
+
+// Start preloading images immediately (before component mounts)
+CHARACTER_IMAGES.forEach((imagePath) => {
+  const img = new Image();
+  img.src = imagePath;
+});
+
 function App() {
   const [loading, setLoading] = useState(true);
   const [manifestoBottomPosition, setManifestoBottomPosition] = useState<number | undefined>(undefined);

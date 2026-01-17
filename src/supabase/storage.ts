@@ -2,8 +2,11 @@ import { supabase, isSupabaseConfigured } from './config';
 
 // Get Supabase Storage URL for an image
 export const getImageUrl = async (imagePath: string): Promise<string> => {
+  // Always ensure local path starts with /
+  const localPath = imagePath.startsWith('/') ? imagePath : `/${imagePath}`;
+  
   if (!isSupabaseConfigured() || !supabase) {
-    return `/${imagePath}`; // Fallback to local
+    return localPath; // Fallback to local
   }
 
   try {
@@ -17,10 +20,10 @@ export const getImageUrl = async (imagePath: string): Promise<string> => {
     }
     
     // Fallback to local if URL not found
-    return `/${imagePath}`;
+    return localPath;
   } catch (error) {
     console.error(`Error getting Supabase image URL for ${imagePath}:`, error);
-    return `/${imagePath}`; // Fallback to local
+    return localPath; // Fallback to local
   }
 };
 

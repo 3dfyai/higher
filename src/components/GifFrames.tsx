@@ -1,19 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { getImageUrl } from '../supabase/storage';
 
-// Static image paths
+// Static image paths - using local images
 const IMAGE_PATHS = [
-    'alon.png',
-    'Bandit.png',
-    'cented.png',
-    'clukz.png',
-    'cupsey.png',
-    'daumen.png',
-    'duvall.png',
-    'gake.png',
-    'jijo2.png',
-    'joji.png',
-    'mitch.png'
+    '/alon.png',
+    '/Bandit.png',
+    '/cented.png',
+    '/clukz.png',
+    '/cupsey.png',
+    '/daumen.png',
+    '/duvall.png',
+    '/gake.png',
+    '/jijo2.png',
+    '/joji.png',
+    '/mitch.png'
 ];
 
 interface ImageFrameProps {
@@ -21,61 +20,28 @@ interface ImageFrameProps {
     style: React.CSSProperties;
     imageIndex: number;
     onImageClick: (imagePath: string) => void;
+    imagesPreloaded: boolean;
 }
 
-const ImageFrame: React.FC<ImageFrameProps> = ({ className, style, imageIndex, onImageClick }) => {
-    const [isVisible, setIsVisible] = useState(false);
-    const [imageUrl, setImageUrl] = useState<string>('');
+const ImageFrame: React.FC<ImageFrameProps> = ({ className, style, imageIndex, onImageClick, imagesPreloaded }) => {
     const frameRef = React.useRef<HTMLDivElement>(null);
     const imagePath = IMAGE_PATHS[imageIndex % IMAGE_PATHS.length];
 
-    // Load image URL (Supabase or local)
-    useEffect(() => {
-        const loadImageUrl = async () => {
-            try {
-                const url = await getImageUrl(imagePath);
-                setImageUrl(url);
-            } catch (error) {
-                console.error(`Error loading Supabase image ${imagePath}:`, error);
-                setImageUrl(`/${imagePath}`); // Fallback to local
-            }
-        };
-        
-        loadImageUrl();
-    }, [imagePath]);
-
-    // Lazy load images only when they're about to be visible
-    useEffect(() => {
-        if (!frameRef.current || !imageUrl) return;
-
-        const observer = new IntersectionObserver(
-            (entries) => {
-                entries.forEach((entry) => {
-                    if (entry.isIntersecting && !isVisible) {
-                        setIsVisible(true);
-                    }
-                });
-            },
-            { rootMargin: '200px' } // Start loading 200px before entering viewport
-        );
-
-        observer.observe(frameRef.current);
-        return () => observer.disconnect();
-    }, [isVisible, imageUrl]);
-
     const handleClick = () => {
-        if (isVisible && imageUrl) {
-            onImageClick(imageUrl);
-        }
+        onImageClick(imagePath);
     };
 
     return (
-        <div ref={frameRef} className={`gif-frame ${className}`} style={style}>
+        <div 
+            ref={frameRef} 
+            className={`gif-frame ${className}`} 
+            style={style}
+        >
             <div className="gif-frame-content" onClick={handleClick}>
-                {!isVisible || !imageUrl ? (
-                    <span className="gif-loading">LOADING...</span>
+                {imagesPreloaded ? (
+                    <img src={imagePath} alt="Character" loading="eager" className="clickable-image" />
                 ) : (
-                    <img src={imageUrl} alt="Character" loading="lazy" className="clickable-image" />
+                    <span className="gif-loading">LOADING...</span>
                 )}
             </div>
         </div>
@@ -90,6 +56,39 @@ const GifFrames: React.FC<GifFramesProps> = ({ manifestoBottomPosition }) => {
     const [windowHeight, setWindowHeight] = useState<number>(typeof window !== 'undefined' ? window.innerHeight : 1080);
     const [gifPositions, setGifPositions] = useState<Record<number, string>>({});
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    const [imagesPreloaded, setImagesPreloaded] = useState(false);
+
+    // Preload all images immediately when component mounts (start immediately, don't wait)
+    useEffect(() => {
+        // Start preloading immediately
+        IMAGE_PATHS.forEach((imagePath) => {
+            const img = new Image();
+            img.src = imagePath; // Start loading immediately
+        });
+
+        // Set as preloaded after a short delay to allow browser to start loading
+        // This way images start loading immediately but we show them once browser has them cached
+        const checkImagesLoaded = async () => {
+            const imagePromises = IMAGE_PATHS.map((imagePath) => {
+                return new Promise<void>((resolve) => {
+                    const img = new Image();
+                    if (img.complete) {
+                        resolve();
+                    } else {
+                        img.onload = () => resolve();
+                        img.onerror = () => resolve(); // Continue even if one fails
+                        img.src = imagePath;
+                    }
+                });
+            });
+
+            await Promise.all(imagePromises);
+            setImagesPreloaded(true);
+        };
+
+        // Start checking immediately
+        checkImagesLoaded();
+    }, []);
 
     useEffect(() => {
         const handleResize = () => {
@@ -180,17 +179,17 @@ const GifFrames: React.FC<GifFramesProps> = ({ manifestoBottomPosition }) => {
     return (
         <>
             {/* === BELOW MANIFESTO (using static images) === */}
-            <ImageFrame className="gif-frame-1" style={{ top: getPosition(0), left: '5%' }} imageIndex={0} onImageClick={handleImageClick} />
-            <ImageFrame className="gif-frame-2" style={{ top: getPosition(0), right: '5%' }} imageIndex={1} onImageClick={handleImageClick} />
-            <ImageFrame className="gif-frame-3" style={{ top: getPosition(1), left: '15%' }} imageIndex={2} onImageClick={handleImageClick} />
-            <ImageFrame className="gif-frame-4" style={{ top: getPosition(1), right: '15%' }} imageIndex={3} onImageClick={handleImageClick} />
-            <ImageFrame className="gif-frame-5" style={{ top: getPosition(2), left: '3%' }} imageIndex={4} onImageClick={handleImageClick} />
-            <ImageFrame className="gif-frame-6" style={{ top: getPosition(2), right: '3%' }} imageIndex={5} onImageClick={handleImageClick} />
-            <ImageFrame className="gif-frame-7" style={{ top: getPosition(3), left: '10%' }} imageIndex={6} onImageClick={handleImageClick} />
-            <ImageFrame className="gif-frame-8" style={{ top: getPosition(3), right: '10%' }} imageIndex={7} onImageClick={handleImageClick} />
-            <ImageFrame className="gif-frame-9" style={{ top: getPosition(4), left: '2%' }} imageIndex={8} onImageClick={handleImageClick} />
-            <ImageFrame className="gif-frame-10" style={{ top: getPosition(4), right: '2%' }} imageIndex={9} onImageClick={handleImageClick} />
-            <ImageFrame className="gif-frame-11 gif-frame-center" style={{ top: getPosition(5), left: '50%' }} imageIndex={10} onImageClick={handleImageClick} />
+            <ImageFrame className="gif-frame-1" style={{ top: getPosition(0), left: '5%' }} imageIndex={0} onImageClick={handleImageClick} imagesPreloaded={imagesPreloaded} />
+            <ImageFrame className="gif-frame-2" style={{ top: getPosition(0), right: '5%' }} imageIndex={1} onImageClick={handleImageClick} imagesPreloaded={imagesPreloaded} />
+            <ImageFrame className="gif-frame-3" style={{ top: getPosition(1), left: '15%' }} imageIndex={2} onImageClick={handleImageClick} imagesPreloaded={imagesPreloaded} />
+            <ImageFrame className="gif-frame-4" style={{ top: getPosition(1), right: '15%' }} imageIndex={3} onImageClick={handleImageClick} imagesPreloaded={imagesPreloaded} />
+            <ImageFrame className="gif-frame-5" style={{ top: getPosition(2), left: '3%' }} imageIndex={4} onImageClick={handleImageClick} imagesPreloaded={imagesPreloaded} />
+            <ImageFrame className="gif-frame-6" style={{ top: getPosition(2), right: '3%' }} imageIndex={5} onImageClick={handleImageClick} imagesPreloaded={imagesPreloaded} />
+            <ImageFrame className="gif-frame-7" style={{ top: getPosition(3), left: '10%' }} imageIndex={6} onImageClick={handleImageClick} imagesPreloaded={imagesPreloaded} />
+            <ImageFrame className="gif-frame-8" style={{ top: getPosition(3), right: '10%' }} imageIndex={7} onImageClick={handleImageClick} imagesPreloaded={imagesPreloaded} />
+            <ImageFrame className="gif-frame-9" style={{ top: getPosition(4), left: '2%' }} imageIndex={8} onImageClick={handleImageClick} imagesPreloaded={imagesPreloaded} />
+            <ImageFrame className="gif-frame-10" style={{ top: getPosition(4), right: '2%' }} imageIndex={9} onImageClick={handleImageClick} imagesPreloaded={imagesPreloaded} />
+            <ImageFrame className="gif-frame-11 gif-frame-center" style={{ top: getPosition(5), left: '50%' }} imageIndex={10} onImageClick={handleImageClick} imagesPreloaded={imagesPreloaded} />
 
             {/* Image Modal/Lightbox */}
             {selectedImage && (
