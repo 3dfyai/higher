@@ -1019,6 +1019,63 @@ body {
   pointer-events: none;
 }
 
+.loading-screen.slide-up-exit .loading-floating-char {
+  opacity: 0;
+  transition: opacity 0.5s ease-out;
+}
+
+/* Floating ascending characters in loading screen */
+.loading-floating-char {
+  position: absolute;
+  bottom: -200px;
+  width: 280px;
+  height: auto;
+  transform: translateX(-50%);
+  z-index: 10000;
+  pointer-events: none;
+  filter: drop-shadow(0 0 20px rgba(20, 241, 149, 0.6)) 
+          drop-shadow(0 0 40px rgba(20, 241, 149, 0.3));
+  animation: loadingAscendCurved linear forwards;
+  opacity: 0;
+}
+
+@keyframes loadingAscendCurved {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateX(calc(var(--drift, 0%) * 0)) translateY(0) rotate(-3deg) scale(0.8);
+  }
+  5% {
+    opacity: 1;
+  }
+  15% {
+    transform: translateX(-50%) translateX(calc(var(--drift, 0%) * 0.15 + 3%)) translateY(-22.5vh) rotate(4deg) scale(0.85);
+  }
+  30% {
+    transform: translateX(-50%) translateX(calc(var(--drift, 0%) * 0.3 - 2%)) translateY(-45vh) rotate(-2deg) scale(0.9);
+  }
+  45% {
+    transform: translateX(-50%) translateX(calc(var(--drift, 0%) * 0.45 + 2.5%)) translateY(-67.5vh) rotate(3deg) scale(0.95);
+  }
+  60% {
+    transform: translateX(-50%) translateX(calc(var(--drift, 0%) * 0.6 - 1.5%)) translateY(-90vh) rotate(-2deg) scale(1);
+  }
+  75% {
+    transform: translateX(-50%) translateX(calc(var(--drift, 0%) * 0.75 + 3%)) translateY(-112.5vh) rotate(4deg) scale(1.05);
+  }
+  90% {
+    opacity: 1;
+    transform: translateX(-50%) translateX(calc(var(--drift, 0%) * 0.9 - 2%)) translateY(-135vh) rotate(-2deg) scale(1.1);
+  }
+  98% {
+    opacity: 0.5;
+    transform: translateX(-50%) translateX(calc(var(--drift, 0%) * 0.98 + 1%)) translateY(-147vh) rotate(0deg) scale(1.15);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateX(calc(var(--drift, 0%) * 1)) translateY(-200vh) rotate(0deg) scale(1.2);
+  }
+}
+
 .loading-screen-bg {
   position: absolute;
   top: 0;
