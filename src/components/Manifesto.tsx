@@ -125,7 +125,7 @@ const Manifesto: React.FC<ManifestoProps> = ({ onHeightChange }) => {
             </div>
             <div className="ascended-image-container">
                 <img 
-                    src="/alon_ascended.png" 
+                    src="/Add a heading (30).png" 
                     alt="Ascended" 
                     className="ascended-image"
                 />

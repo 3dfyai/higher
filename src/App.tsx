@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import BackgroundGrid from './components/BackgroundGrid';
 import Hero from './components/Hero';
 import Footer from './components/Footer';
@@ -9,6 +9,26 @@ import LoadingScreen from './components/LoadingScreen';
 function App() {
   const [loading, setLoading] = useState(true);
   const [manifestoBottomPosition, setManifestoBottomPosition] = useState<number | undefined>(undefined);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  // Play background music when site loads (after loading screen)
+  useEffect(() => {
+    if (!loading) {
+      const audio = new Audio('/website_bgmusic.mp3');
+      audio.loop = true;
+      audioRef.current = audio;
+      audio.play().catch((err) => {
+        console.log('Background music play failed:', err);
+      });
+      
+      return () => {
+        if (audioRef.current) {
+          audioRef.current.pause();
+          audioRef.current = null;
+        }
+      };
+    }
+  }, [loading]);
 
   useEffect(() => {
     let rafId: number | null = null;
