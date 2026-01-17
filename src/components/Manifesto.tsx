@@ -142,7 +142,7 @@ const Manifesto: React.FC<ManifestoProps> = ({ onHeightChange }) => {
                 className="ascended-image-container element-visible"
             >
                 <img 
-                    src="/Add a heading (30).png" 
+                    src="/Add a heading (30)_converted.webp" 
                     alt="Ascended" 
                     className="ascended-image"
                 />
