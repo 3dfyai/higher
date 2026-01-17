@@ -8,9 +8,16 @@ const Manifesto: React.FC<ManifestoProps> = ({ onHeightChange }) => {
     const [lineStates, setLineStates] = useState<Map<number, string>>(new Map());
     const [currentTypingLine, setCurrentTypingLine] = useState<number>(-1);
     const [hasStarted, setHasStarted] = useState(false);
+    const [isTypingComplete, setIsTypingComplete] = useState(false);
+    const [visibleElements, setVisibleElements] = useState<Set<string>>(new Set());
     const lineRefs = useRef<(HTMLDivElement | null)[]>([]);
     const sectionRef = useRef<HTMLElement>(null);
+    const imageRef = useRef<HTMLDivElement>(null);
+    const tokenInfoRef = useRef<HTMLDivElement>(null);
     const timeoutRefs = useRef<Map<number, ReturnType<typeof setTimeout>>>(new Map());
+    const autoScrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const scrollLockPositionRef = useRef<number>(0);
+    const isScrollingRef = useRef<boolean>(false);
 
     const lines = [
         "Ascend is not merely a direction—it is a continuous state of being.",
@@ -48,33 +55,84 @@ const Manifesto: React.FC<ManifestoProps> = ({ onHeightChange }) => {
                     timeoutRefs.current.set(lineIndex, timeout);
                     charIndex++;
                 } else {
-                    // Line complete - check for next line that's scrolled into view
+                    // Line complete - auto-scroll and start next line
                     timeoutRefs.current.delete(lineIndex);
-                    setCurrentTypingLine(-1);
                     
-                    // Check if any line is ready to type (has scrolled into view)
-                    const checkNextLine = () => {
-                        for (let i = 0; i < lines.length; i++) {
-                            const lineRef = lineRefs.current[i];
-                            const lineText = lineStates.get(i) || '';
-                            const isCompleted = lineText.length === lines[i].length && lineText.length > 0;
+                    // Check if all lines are complete
+                    const allComplete = lineIndex === lines.length - 1;
+                    
+                    if (allComplete) {
+                        // All typing complete - unlock scrolling
+                        setIsTypingComplete(true);
+                        setCurrentTypingLine(-1);
+                        
+                        setTimeout(() => {
+                            // Restore scroll position and unlock smoothly
+                            const savedScroll = scrollLockPositionRef.current;
                             
-                            // If line hasn't been typed yet and is in view
-                            if (lineRef && !isCompleted && lineText.length === 0) {
-                                const rect = lineRef.getBoundingClientRect();
-                                const windowHeight = window.innerHeight;
-                                // If line is in viewport
-                                if (rect.top < windowHeight * 0.7 && rect.bottom > windowHeight * 0.3) {
-                                    setCurrentTypingLine(i);
-                                    return;
+                            // Use requestAnimationFrame to ensure smooth transition
+                            requestAnimationFrame(() => {
+                                // Restore body styles
+                                document.body.style.overflow = '';
+                                document.body.style.position = '';
+                                document.body.style.top = '';
+                                document.body.style.left = '';
+                                document.body.style.right = '';
+                                document.body.style.width = '';
+                                document.documentElement.style.scrollBehavior = '';
+                                
+                                // Restore scroll position without smooth to prevent layout shift
+                                window.scrollTo({
+                                    top: savedScroll,
+                                    behavior: 'auto'
+                                });
+                            });
+                        }, 100);
+                    } else {
+                        // Auto-scroll to next line and start typing
+                        const nextLineIndex = lineIndex + 1;
+                        const nextLineRef = lineRefs.current[nextLineIndex];
+                        
+                        if (nextLineRef) {
+                            // Calculate target scroll position
+                            const rect = nextLineRef.getBoundingClientRect();
+                            const targetOffset = rect.top - (window.innerHeight * 0.4);
+                            const newScrollPosition = scrollLockPositionRef.current + targetOffset;
+                            
+                            // Enable smooth scrolling temporarily
+                            isScrollingRef.current = true;
+                            
+                            // Smoothly update scroll position
+                            const startPosition = scrollLockPositionRef.current;
+                            const distance = targetOffset;
+                            const duration = 600; // 600ms smooth scroll
+                            const startTime = performance.now();
+                            
+                            const animateScroll = (currentTime: number) => {
+                                const elapsed = currentTime - startTime;
+                                const progress = Math.min(elapsed / duration, 1);
+                                
+                                // Easing function for smooth scroll
+                                const ease = 1 - Math.pow(1 - progress, 3);
+                                const currentOffset = startPosition + (distance * ease);
+                                
+                                scrollLockPositionRef.current = currentOffset;
+                                document.body.style.top = `-${currentOffset}px`;
+                                
+                                if (progress < 1) {
+                                    requestAnimationFrame(animateScroll);
+                                } else {
+                                    isScrollingRef.current = false;
+                                    // Start typing next line
+                                    setCurrentTypingLine(nextLineIndex);
                                 }
-                            }
+                            };
+                            
+                            requestAnimationFrame(animateScroll);
+                        } else {
+                            setCurrentTypingLine(-1);
                         }
-                    };
-                    
-                    // Small delay before checking next line
-                    const pauseTimeout = setTimeout(checkNextLine, 200);
-                    timeoutRefs.current.set(-1, pauseTimeout);
+                    }
                 }
             }
         };
@@ -103,7 +161,29 @@ const Manifesto: React.FC<ManifestoProps> = ({ onHeightChange }) => {
         };
     }, [currentTypingLine]);
 
-    // Show all lines instantly when section comes into view, then type as user scrolls
+    // Prevent scroll events when locked
+    useEffect(() => {
+        if (!hasStarted || isTypingComplete) return;
+
+        const preventScroll = (e: WheelEvent | TouchEvent) => {
+            if (!isScrollingRef.current) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        };
+
+        window.addEventListener('wheel', preventScroll, { passive: false });
+        window.addEventListener('touchmove', preventScroll, { passive: false });
+        document.addEventListener('scroll', preventScroll, { passive: false });
+
+        return () => {
+            window.removeEventListener('wheel', preventScroll);
+            window.removeEventListener('touchmove', preventScroll);
+            document.removeEventListener('scroll', preventScroll);
+        };
+    }, [hasStarted, isTypingComplete]);
+
+    // Show all lines instantly when section comes into view, lock scrolling, and start typing
     useEffect(() => {
         if (!sectionRef.current || hasStarted) return;
 
@@ -112,8 +192,22 @@ const Manifesto: React.FC<ManifestoProps> = ({ onHeightChange }) => {
                 entries.forEach((entry) => {
                     if (entry.isIntersecting && !hasStarted) {
                         setHasStarted(true);
-                        // Make all lines visible instantly (but empty)
-                        // Lines will type individually as they scroll into view
+                        
+                        // Save current scroll position
+                        scrollLockPositionRef.current = window.scrollY || document.documentElement.scrollTop;
+                        
+                        // Lock scrolling smoothly
+                        document.body.style.overflow = 'hidden';
+                        document.body.style.position = 'fixed';
+                        document.body.style.top = `-${scrollLockPositionRef.current}px`;
+                        document.body.style.left = '0';
+                        document.body.style.right = '0';
+                        document.body.style.width = '100%';
+                        
+                        // Start typing first line after a brief delay
+                        setTimeout(() => {
+                            setCurrentTypingLine(0);
+                        }, 300);
                     }
                 });
             },
@@ -130,50 +224,60 @@ const Manifesto: React.FC<ManifestoProps> = ({ onHeightChange }) => {
         };
     }, [hasStarted]);
 
-    // Individual line observers - trigger typing as each line scrolls into view
+    // Scroll-triggered reveals for elements below text (after typing completes)
     useEffect(() => {
-        if (!hasStarted) return;
+        if (!isTypingComplete) return;
+
+        const elements = [
+            { ref: imageRef, id: 'image' },
+            { ref: tokenInfoRef, id: 'tokenInfo' }
+        ];
 
         const observers: IntersectionObserver[] = [];
-        const startedTyping = new Set<number>();
 
-        lineRefs.current.forEach((lineRef, index) => {
-            if (!lineRef) return;
+        elements.forEach(({ ref, id }) => {
+            if (!ref.current) return;
 
             const observer = new IntersectionObserver(
                 (entries) => {
                     entries.forEach((entry) => {
                         if (entry.isIntersecting) {
-                            const lineText = lineStates.get(index) || '';
-                            const isCompleted = lineText.length === lines[index].length && lineText.length > 0;
-                            
-                            // Only start typing if line hasn't been typed yet and isn't currently typing
-                            if (!isCompleted && !startedTyping.has(index) && currentTypingLine !== index) {
-                                startedTyping.add(index);
-                                
-                                // If no line is currently typing, start this one
-                                if (currentTypingLine === -1) {
-                                    setCurrentTypingLine(index);
-                                }
-                                // Otherwise, it will start when current line finishes
-                            }
+                            setVisibleElements(prev => {
+                                const updated = new Set(prev);
+                                updated.add(id);
+                                return updated;
+                            });
+                            observer.unobserve(entry.target);
                         }
                     });
                 },
                 {
-                    rootMargin: '0px 0px -30% 0px',
-                    threshold: 0.2
+                    rootMargin: '0px 0px 50% 0px', // Trigger when element is 50% above viewport
+                    threshold: 0.01 // Trigger as soon as any part is visible
                 }
             );
 
-            observer.observe(lineRef);
+            observer.observe(ref.current);
             observers.push(observer);
         });
 
         return () => {
             observers.forEach(obs => obs.disconnect());
         };
-    }, [hasStarted, currentTypingLine, lineStates, lines]);
+    }, [isTypingComplete]);
+
+    // Cleanup on unmount
+    useEffect(() => {
+        return () => {
+            // Re-enable scrolling if component unmounts
+            document.body.style.overflow = '';
+            document.body.style.position = '';
+            document.body.style.width = '';
+            if (autoScrollTimeoutRef.current) {
+                clearTimeout(autoScrollTimeoutRef.current);
+            }
+        };
+    }, []);
 
     // Calculate and report the bottom position of the manifesto section
     useEffect(() => {
@@ -256,14 +360,20 @@ const Manifesto: React.FC<ManifestoProps> = ({ onHeightChange }) => {
                     );
                 })}
             </div>
-            <div className="ascended-image-container">
+            <div 
+                ref={imageRef}
+                className={`ascended-image-container ${visibleElements.has('image') ? 'element-visible' : 'element-hidden'}`}
+            >
                 <img 
                     src="/Add a heading (30).png" 
                     alt="Ascended" 
                     className="ascended-image"
                 />
             </div>
-            <div className="token-info-section">
+            <div 
+                ref={tokenInfoRef}
+                className={`token-info-section ${visibleElements.has('tokenInfo') ? 'element-visible' : 'element-hidden'}`}
+            >
                 <div className="token-symbol">$ASCEND</div>
                 <div className="ca-section">
                     <span className="ca-label">CA:</span>

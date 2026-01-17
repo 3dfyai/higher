@@ -28,6 +28,7 @@ body {
   min-height: 500vh;
   overflow-x: hidden;
   color: #fff;
+  transition: top 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Background Grid Pattern */
@@ -396,6 +397,8 @@ body {
   align-items: center;
   justify-content: flex-start;
   min-height: 150vh;
+  contain: layout style;
+  will-change: transform;
 }
 
 .manifesto-lines-container {
@@ -410,6 +413,8 @@ body {
   text-align: center;
   margin-bottom: 15vh;
   padding: 5vh 0;
+  contain: layout style;
+  will-change: transform;
 }
 
 .manifesto-line {
@@ -434,7 +439,10 @@ body {
   backface-visibility: hidden;
   -webkit-font-smoothing: antialiased;
   min-height: 2em;
+  height: auto;
   filter: blur(0px);
+  position: relative;
+  contain: layout style;
 }
 
 .manifesto-text {
@@ -573,6 +581,20 @@ body {
   margin-top: 10vh;
   z-index: 15;
   pointer-events: none;
+  will-change: transform, opacity;
+  contain: layout;
+  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ascended-image-container.element-hidden {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.ascended-image-container.element-visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .ascended-image {
@@ -597,6 +619,20 @@ body {
   padding: 8vh 4vw 0 4vw;
   gap: 3vh;
   z-index: 15;
+  will-change: transform, opacity;
+  contain: layout;
+  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.1s,
+              transform 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.1s;
+}
+
+.token-info-section.element-hidden {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.token-info-section.element-visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .token-symbol {
