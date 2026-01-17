@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from 'react';
+import { getImageUrl } from '../supabase/storage';
 
 // Static image paths
 const IMAGE_PATHS = [
-    '/alon.png',
-    '/Bandit.png',
-    '/cented.png',
-    '/clukz.png',
-    '/cupsey.png',
-    '/daumen.png',
-    '/duvall.png',
-    '/gake.png',
-    '/jijo2.png',
-    '/joji.png',
-    '/mitch.png'
+    'alon.png',
+    'Bandit.png',
+    'cented.png',
+    'clukz.png',
+    'cupsey.png',
+    'daumen.png',
+    'duvall.png',
+    'gake.png',
+    'jijo2.png',
+    'joji.png',
+    'mitch.png'
 ];
 
 interface ImageFrameProps {
@@ -24,12 +25,28 @@ interface ImageFrameProps {
 
 const ImageFrame: React.FC<ImageFrameProps> = ({ className, style, imageIndex, onImageClick }) => {
     const [isVisible, setIsVisible] = useState(false);
+    const [imageUrl, setImageUrl] = useState<string>('');
     const frameRef = React.useRef<HTMLDivElement>(null);
     const imagePath = IMAGE_PATHS[imageIndex % IMAGE_PATHS.length];
 
+    // Load image URL (Supabase or local)
+    useEffect(() => {
+        const loadImageUrl = async () => {
+            try {
+                const url = await getImageUrl(imagePath);
+                setImageUrl(url);
+            } catch (error) {
+                console.error(`Error loading Supabase image ${imagePath}:`, error);
+                setImageUrl(`/${imagePath}`); // Fallback to local
+            }
+        };
+        
+        loadImageUrl();
+    }, [imagePath]);
+
     // Lazy load images only when they're about to be visible
     useEffect(() => {
-        if (!frameRef.current) return;
+        if (!frameRef.current || !imageUrl) return;
 
         const observer = new IntersectionObserver(
             (entries) => {
@@ -44,21 +61,21 @@ const ImageFrame: React.FC<ImageFrameProps> = ({ className, style, imageIndex, o
 
         observer.observe(frameRef.current);
         return () => observer.disconnect();
-    }, [isVisible]);
+    }, [isVisible, imageUrl]);
 
     const handleClick = () => {
-        if (isVisible) {
-            onImageClick(imagePath);
+        if (isVisible && imageUrl) {
+            onImageClick(imageUrl);
         }
     };
 
     return (
         <div ref={frameRef} className={`gif-frame ${className}`} style={style}>
             <div className="gif-frame-content" onClick={handleClick}>
-                {!isVisible ? (
+                {!isVisible || !imageUrl ? (
                     <span className="gif-loading">LOADING...</span>
                 ) : (
-                    <img src={imagePath} alt="Character" loading="lazy" className="clickable-image" />
+                    <img src={imageUrl} alt="Character" loading="lazy" className="clickable-image" />
                 )}
             </div>
         </div>
