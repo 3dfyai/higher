@@ -5,21 +5,54 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ascend</title>
+    <!-- Preload critical loading screen images first -->
+    <link rel="preload" as="image" href="/Fill_his_extra_2k_202601170459_upscayl_2x_upscayl-standard-4x.webp" fetchpriority="high" />
+    <link rel="preload" as="image" href="/ChatGPT Image Jan 17, 2026, 05_11_16 AM.png" fetchpriority="high" />
     <!-- Preload character images for faster loading -->
-    <link rel="preload" as="image" href="/alon.png" />
-    <link rel="preload" as="image" href="/Bandit.png" />
-    <link rel="preload" as="image" href="/cented.png" />
-    <link rel="preload" as="image" href="/clukz.png" />
-    <link rel="preload" as="image" href="/cupsey.png" />
-    <link rel="preload" as="image" href="/daumen.png" />
-    <link rel="preload" as="image" href="/duvall.png" />
-    <link rel="preload" as="image" href="/gake.png" />
-    <link rel="preload" as="image" href="/jijo2.png" />
-    <link rel="preload" as="image" href="/joji.png" />
-    <link rel="preload" as="image" href="/mitch.png" />
+    <link rel="preload" as="image" href="/1.webp" />
+    <link rel="preload" as="image" href="/2.webp" />
+    <link rel="preload" as="image" href="/3.webp" />
+    <link rel="preload" as="image" href="/4.webp" />
+    <link rel="preload" as="image" href="/5.webp" />
+    <link rel="preload" as="image" href="/6.webp" />
+    <link rel="preload" as="image" href="/7.webp" />
+    <link rel="preload" as="image" href="/8.webp" />
+    <link rel="preload" as="image" href="/9.webp" />
+    <link rel="preload" as="image" href="/10.webp" />
+    <link rel="preload" as="image" href="/11.webp" />
+    <link rel="preload" as="image" href="/alon.webp" />
+    <link rel="preload" as="image" href="/Bandit.webp" />
+    <link rel="preload" as="image" href="/cented.webp" />
+    <link rel="preload" as="image" href="/clukz.webp" />
+    <link rel="preload" as="image" href="/cupsey.webp" />
+    <link rel="preload" as="image" href="/daumen.webp" />
+    <link rel="preload" as="image" href="/duvall.webp" />
+    <link rel="preload" as="image" href="/gake.webp" />
+    <link rel="preload" as="image" href="/jijo2.webp" />
+    <link rel="preload" as="image" href="/joji.webp" />
+    <link rel="preload" as="image" href="/mitch.webp" />
+    <style>
+      /* Hide browser's default loading spinner */
+      html:not(.loaded) {
+        background: #000;
+      }
+      /* Prevent FOUC (Flash of Unstyled Content) */
+      body {
+        margin: 0;
+        padding: 0;
+        background: #000;
+      }
+      #root {
+        min-height: 100vh;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      // Mark as loaded to remove any browser loading indicators
+      document.documentElement.classList.add('loaded');
+    </script>
   </body>
 </html>

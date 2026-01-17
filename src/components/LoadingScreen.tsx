@@ -16,40 +16,26 @@ interface FloatingChar {
 const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
     const [isExiting, setIsExiting] = useState(false);
     const [floatingChars, setFloatingChars] = useState<FloatingChar[]>([]);
-    const [imagesLoaded, setImagesLoaded] = useState(false);
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const charIdCounter = useRef(0);
     const spawnTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const characters = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]; // Character indices
 
-    // Preload critical images
+    // Preload images in background (non-blocking - show screen immediately)
     useEffect(() => {
         const criticalImages = [
-            '/loading_screen_image.png',
+            '/Fill_his_extra_2k_202601170459_upscayl_2x_upscayl-standard-4x.webp',
             '/ChatGPT Image Jan 17, 2026, 05_11_16 AM.png'
         ];
 
         // Preload character images in background (lower priority)
-        const characterImages = characters.map(char => `/${char}.png`);
+        const characterImages = characters.map(char => `/${char}.webp`);
 
-        const loadImage = (src: string): Promise<void> => {
-            return new Promise((resolve) => {
-                const img = new Image();
-                img.onload = () => resolve();
-                img.onerror = () => resolve(); // Continue even if image fails
-                img.src = src;
-            });
-        };
-
-        // Load critical images first
-        Promise.all(criticalImages.map(loadImage)).then(() => {
-            setImagesLoaded(true);
-            
-            // Load character images in background (non-blocking)
-            characterImages.forEach(img => {
-                loadImage(img).catch(() => {}); // Silent fail for background images
-            });
+        // Start loading all images immediately but don't wait
+        [...criticalImages, ...characterImages].forEach(src => {
+            const img = new Image();
+            img.src = src;
         });
     }, []);
 
@@ -139,52 +125,44 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
 
     return (
         <div className={`loading-screen ${isExiting ? 'slide-up-exit' : ''}`}>
-            {imagesLoaded ? (
-                <>
+            <img 
+                src="/Fill_his_extra_2k_202601170459_upscayl_2x_upscayl-standard-4x.webp" 
+                alt="Loading Background" 
+                className="loading-screen-bg"
+                loading="eager"
+            />
+            
+            {/* Floating ascending characters */}
+            {floatingChars.map((char) => (
+                <img
+                    key={char.id}
+                    src={`/${char.charIndex}.webp`}
+                    alt=""
+                    className="loading-floating-char"
+                    loading="lazy"
+                    style={{
+                        left: `${char.left}%`,
+                        animationDuration: `${char.duration}s`,
+                        animationDelay: `${char.delay}s`,
+                        '--drift': `${char.horizontalDrift}%`,
+                    } as React.CSSProperties}
+                />
+            ))}
+            
+            <div className="loading-content">
+                <button 
+                    className="ascend-button"
+                    onClick={handleClick}
+                    aria-label="Click to Ascend"
+                >
                     <img 
-                        src="/loading_screen_image.png" 
-                        alt="Loading Background" 
-                        className="loading-screen-bg"
+                        src="/ChatGPT Image Jan 17, 2026, 05_11_16 AM.png" 
+                        alt="Ascend" 
+                        className="ascend-button-image"
                         loading="eager"
                     />
-                    
-                    {/* Floating ascending characters */}
-                    {floatingChars.map((char) => (
-                        <img
-                            key={char.id}
-                            src={`/${char.charIndex}.png`}
-                            alt=""
-                            className="loading-floating-char"
-                            loading="lazy"
-                            style={{
-                                left: `${char.left}%`,
-                                animationDuration: `${char.duration}s`,
-                                animationDelay: `${char.delay}s`,
-                                '--drift': `${char.horizontalDrift}%`,
-                            } as React.CSSProperties}
-                        />
-                    ))}
-                    
-                    <div className="loading-content">
-                        <button 
-                            className="ascend-button"
-                            onClick={handleClick}
-                            aria-label="Click to Ascend"
-                        >
-                            <img 
-                                src="/ChatGPT Image Jan 17, 2026, 05_11_16 AM.png" 
-                                alt="Ascend" 
-                                className="ascend-button-image"
-                                loading="eager"
-                            />
-                        </button>
-                    </div>
-                </>
-            ) : (
-                <div className="loading-screen-placeholder">
-                    <div className="loading-spinner"></div>
-                </div>
-            )}
+                </button>
+            </div>
             <audio ref={audioRef} preload="none">
                 <source src="/celestial_sound.mp3" type="audio/mpeg" />
             </audio>

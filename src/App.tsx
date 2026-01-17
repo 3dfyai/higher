@@ -8,17 +8,17 @@ import LoadingScreen from './components/LoadingScreen';
 
 // Preload character images immediately
 const CHARACTER_IMAGES = [
-  '/alon.png',
-  '/Bandit.png',
-  '/cented.png',
-  '/clukz.png',
-  '/cupsey.png',
-  '/daumen.png',
-  '/duvall.png',
-  '/gake.png',
-  '/jijo2.png',
-  '/joji.png',
-  '/mitch.png'
+  '/alon.webp',
+  '/Bandit.webp',
+  '/cented.webp',
+  '/clukz.webp',
+  '/cupsey.webp',
+  '/daumen.webp',
+  '/duvall.webp',
+  '/gake.webp',
+  '/jijo2.webp',
+  '/joji.webp',
+  '/mitch.webp'
 ];
 
 // Start preloading images immediately (before component mounts)

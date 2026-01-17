@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
 
-// Static image paths - using local images
+// Static image paths - using local WebP images
 const IMAGE_PATHS = [
-    '/alon.png',
-    '/Bandit.png',
-    '/cented.png',
-    '/clukz.png',
-    '/cupsey.png',
-    '/daumen.png',
-    '/duvall.png',
-    '/gake.png',
-    '/jijo2.png',
-    '/joji.png',
-    '/mitch.png'
+    '/alon.webp',
+    '/Bandit.webp',
+    '/cented.webp',
+    '/clukz.webp',
+    '/cupsey.webp',
+    '/daumen.webp',
+    '/duvall.webp',
+    '/gake.webp',
+    '/jijo2.webp',
+    '/joji.webp',
+    '/mitch.webp'
 ];
 
 interface ImageFrameProps {
@@ -23,13 +23,13 @@ interface ImageFrameProps {
     imagesPreloaded: boolean;
 }
 
-const ImageFrame: React.FC<ImageFrameProps> = ({ className, style, imageIndex, onImageClick, imagesPreloaded }) => {
+const ImageFrame = React.memo<ImageFrameProps>(({ className, style, imageIndex, onImageClick, imagesPreloaded }) => {
     const frameRef = React.useRef<HTMLDivElement>(null);
     const imagePath = IMAGE_PATHS[imageIndex % IMAGE_PATHS.length];
 
-    const handleClick = () => {
+    const handleClick = React.useCallback(() => {
         onImageClick(imagePath);
-    };
+    }, [imagePath, onImageClick]);
 
     return (
         <div 
@@ -46,7 +46,7 @@ const ImageFrame: React.FC<ImageFrameProps> = ({ className, style, imageIndex, o
             </div>
         </div>
     );
-};
+});
 
 interface GifFramesProps {
     manifestoBottomPosition?: number;
@@ -155,15 +155,15 @@ const GifFrames: React.FC<GifFramesProps> = ({ manifestoBottomPosition }) => {
         return getTopPosition(startOffset + rowSpacing * rowIndex);
     };
 
-    const handleImageClick = (imagePath: string) => {
+    const handleImageClick = React.useCallback((imagePath: string) => {
         setSelectedImage(imagePath);
         document.body.style.overflow = 'hidden';
-    };
+    }, []);
 
-    const handleCloseModal = () => {
+    const handleCloseModal = React.useCallback(() => {
         setSelectedImage(null);
         document.body.style.overflow = '';
-    };
+    }, []);
 
     // Close modal on Escape key
     useEffect(() => {
