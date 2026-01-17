@@ -400,64 +400,158 @@ body {
 
 .manifesto-lines-container {
   width: 100%;
-  max-width: 95%;
+  max-width: 90%;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 10vh;
+  gap: 8vh;
   text-align: center;
-  margin-bottom: 20vh;
+  margin-bottom: 15vh;
+  padding: 5vh 0;
 }
 
 .manifesto-line {
   font-family: 'Montserrat', sans-serif;
-  font-size: clamp(2rem, 5vw, 4.5rem);
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.95);
-  line-height: 1.5;
+  font-size: clamp(1.4rem, 3.5vw, 3rem);
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0);
+  line-height: 1.7;
   opacity: 0;
-  transform: translate3d(0, 40px, 0) scale(0.95);
+  transform: translate3d(0, 50px, 0) scale(0.9);
   transform-origin: center;
-  transition: opacity 0.2s ease-out,
-              transform 0.2s ease-out;
-  letter-spacing: -0.02em;
+  transition: opacity 1s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              transform 1s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              color 0.6s ease-out,
+              text-shadow 0.6s ease-out,
+              filter 0.6s ease-out;
+  letter-spacing: -0.01em;
   width: 100%;
-  max-width: 95%;
+  max-width: 90%;
   margin: 0 auto;
-  will-change: opacity, transform;
+  will-change: opacity, transform, text-shadow;
   backface-visibility: hidden;
   -webkit-font-smoothing: antialiased;
-  contain: layout style paint;
+  min-height: 2em;
+  filter: blur(0px);
+}
+
+.manifesto-text {
+  display: inline;
 }
 
 .manifesto-line-visible {
   opacity: 1;
   transform: translate3d(0, 0, 0) scale(1);
+  color: rgba(255, 255, 255, 0.95);
+}
+
+/* Currently typing line - cinematic glow and focus */
+.manifesto-line-typing {
+  color: rgba(255, 255, 255, 1) !important;
+  text-shadow: 0 0 30px rgba(20, 241, 149, 0.5),
+               0 0 60px rgba(20, 241, 149, 0.2),
+               0 0 90px rgba(20, 241, 149, 0.1);
+  filter: brightness(1.1);
+  animation: typingGlow 2s ease-in-out infinite;
+}
+
+@keyframes typingGlow {
+  0%, 100% {
+    text-shadow: 0 0 30px rgba(20, 241, 149, 0.5),
+                 0 0 60px rgba(20, 241, 149, 0.2),
+                 0 0 90px rgba(20, 241, 149, 0.1);
+  }
+  50% {
+    text-shadow: 0 0 40px rgba(20, 241, 149, 0.7),
+                 0 0 80px rgba(20, 241, 149, 0.3),
+                 0 0 120px rgba(20, 241, 149, 0.15);
+  }
+}
+
+/* Completed line - fade to settled state */
+.manifesto-line-completed {
+  color: rgba(255, 255, 255, 0.9) !important;
+  text-shadow: 0 0 10px rgba(20, 241, 149, 0.2);
+  filter: brightness(0.95);
+  transition: color 1.5s ease-out, text-shadow 1.5s ease-out, filter 1.5s ease-out;
+}
+
+.typewriter-cursor {
+  display: inline-block;
+  color: var(--solana-green);
+  font-weight: 400;
+  margin-left: 4px;
+  font-size: 1.2em;
+  animation: cursorCinematic 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  text-shadow: 0 0 15px var(--solana-green),
+               0 0 30px rgba(20, 241, 149, 0.5);
+  vertical-align: baseline;
+}
+
+@keyframes cursorCinematic {
+  0%, 45% {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+  50%, 95% {
+    opacity: 0.2;
+    transform: scaleY(0.5);
+  }
+  100% {
+    opacity: 1;
+    transform: scaleY(1);
+  }
 }
 
 /* Individual line styles for more dramatic effects */
 .manifesto-line-0 {
-  font-size: clamp(2.2rem, 5.5vw, 5rem);
+  font-size: clamp(1.6rem, 4vw, 3.5rem);
+  font-weight: 700;
+}
+
+.manifesto-line-1 {
+  font-size: clamp(1.3rem, 3.2vw, 2.8rem);
 }
 
 .manifesto-line-2 {
-  font-size: clamp(2.4rem, 6vw, 5.5rem);
-  font-weight: 800;
+  font-size: clamp(1.5rem, 3.5vw, 3rem);
+  font-weight: 700;
 }
 
-.manifesto-line-3,
-.manifesto-line-4 {
-  font-size: clamp(2.5rem, 6.5vw, 6rem);
-  font-weight: 900;
+/* Short impactful lines - bigger for emphasis */
+.manifesto-line-3 {
+  font-size: clamp(1.8rem, 4.5vw, 4rem);
+  font-weight: 800;
   letter-spacing: 0.02em;
 }
 
+.manifesto-line-4 {
+  font-size: clamp(1.8rem, 4.5vw, 4rem);
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+/* Final line - most impactful */
 .manifesto-line-5 {
-  font-size: clamp(2.8rem, 7vw, 7rem);
+  font-size: clamp(2rem, 5vw, 4.5rem);
   font-weight: 900;
   letter-spacing: 0.03em;
+}
+
+/* Glow effect when a line completes */
+.manifesto-line-completed .manifesto-highlight {
+  animation: highlightGlow 2s ease-out forwards;
+}
+
+@keyframes highlightGlow {
+  0% {
+    text-shadow: 0 0 20px var(--solana-green), 0 0 40px var(--solana-green);
+  }
+  100% {
+    text-shadow: none;
+  }
 }
 
 
@@ -939,9 +1033,9 @@ body {
 
 .loading-content {
   position: absolute;
-  bottom: 10vh;
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
   z-index: 2;
   display: flex;
   flex-direction: column;

@@ -5,9 +5,12 @@ interface ManifestoProps {
 }
 
 const Manifesto: React.FC<ManifestoProps> = ({ onHeightChange }) => {
-    const [visibleLines, setVisibleLines] = useState<Set<number>>(new Set());
+    const [lineStates, setLineStates] = useState<Map<number, string>>(new Map());
+    const [currentTypingLine, setCurrentTypingLine] = useState<number>(-1);
+    const [hasStarted, setHasStarted] = useState(false);
     const lineRefs = useRef<(HTMLDivElement | null)[]>([]);
     const sectionRef = useRef<HTMLElement>(null);
+    const timeoutRefs = useRef<Map<number, ReturnType<typeof setTimeout>>>(new Map());
 
     const lines = [
         "Ascend is not merely a direction—it is a continuous state of being.",
@@ -18,39 +21,103 @@ const Manifesto: React.FC<ManifestoProps> = ({ onHeightChange }) => {
         "Elevation was inevitable."
     ];
 
-    useEffect(() => {
-        // Use IntersectionObserver for each line - appears as soon as it enters viewport
-        const observers: IntersectionObserver[] = [];
-
-        lineRefs.current.forEach((lineRef, index) => {
-            if (!lineRef) return;
-
-            const observer = new IntersectionObserver(
-                (entries) => {
-                    entries.forEach((entry) => {
-                        if (entry.isIntersecting) {
-                            setVisibleLines((prev) => {
-                                const updated = new Set(prev);
-                                updated.add(index);
-                                return updated;
-                            });
-                        }
-                    });
-                },
-                {
-                    rootMargin: '0px 0px -20% 0px', // Trigger when line is 20% from bottom of viewport
-                    threshold: 0.1 // Trigger when 10% visible
+    // Type a single line character by character
+    const typeLine = (lineIndex: number) => {
+        const fullText = lines[lineIndex];
+        let charIndex = 0;
+        
+        const typeNextChar = () => {
+            if (charIndex <= fullText.length) {
+                setLineStates(prev => {
+                    const updated = new Map(prev);
+                    updated.set(lineIndex, fullText.substring(0, charIndex));
+                    return updated;
+                });
+                
+                if (charIndex < fullText.length) {
+                    const char = fullText[charIndex];
+                    // Variable delays for cinematic effect
+                    let delay = 40; // Base speed
+                    
+                    if (char === '.') delay = 200; // Dramatic pause at periods
+                    else if (char === ',') delay = 120;
+                    else if (char === '—' || char === '–') delay = 150;
+                    else if (char === ' ') delay = 25;
+                    
+                    const timeout = setTimeout(typeNextChar, delay);
+                    timeoutRefs.current.set(lineIndex, timeout);
+                    charIndex++;
+                } else {
+                    // Line complete - start next line after pause
+                    timeoutRefs.current.delete(lineIndex);
+                    
+                    if (lineIndex < lines.length - 1) {
+                        // Dramatic pause before next line
+                        const pauseTimeout = setTimeout(() => {
+                            setCurrentTypingLine(lineIndex + 1);
+                        }, 1000); // 1 second pause between lines
+                        timeoutRefs.current.set(-1, pauseTimeout);
+                    } else {
+                        setCurrentTypingLine(-1); // All done
+                    }
                 }
-            );
+            }
+        };
+        
+        // Small delay before starting to type
+        const startTimeout = setTimeout(() => {
+            typeNextChar();
+        }, 400);
+        timeoutRefs.current.set(lineIndex, startTimeout);
+    };
 
-            observer.observe(lineRef);
-            observers.push(observer);
-        });
+    // Start typing when current line changes
+    useEffect(() => {
+        if (currentTypingLine >= 0 && currentTypingLine < lines.length) {
+            typeLine(currentTypingLine);
+        }
+        
+        return () => {
+            // Cleanup timeouts for this line
+            timeoutRefs.current.forEach((timeout, key) => {
+                if (key === currentTypingLine || key === -1) {
+                    clearTimeout(timeout);
+                    timeoutRefs.current.delete(key);
+                }
+            });
+        };
+    }, [currentTypingLine]);
+
+    // Trigger start when section comes into view
+    useEffect(() => {
+        if (!sectionRef.current || hasStarted) return;
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting && !hasStarted) {
+                        setHasStarted(true);
+                        // Start cinematic sequence
+                        setTimeout(() => {
+                            setCurrentTypingLine(0);
+                        }, 600);
+                    }
+                });
+            },
+            {
+                rootMargin: '0px 0px -20% 0px',
+                threshold: 0.1
+            }
+        );
+
+        observer.observe(sectionRef.current);
 
         return () => {
-            observers.forEach((observer) => observer.disconnect());
+            observer.disconnect();
+            timeoutRefs.current.forEach(timeout => clearTimeout(timeout));
+            timeoutRefs.current.clear();
         };
-    }, [lines.length]);
+    }, [hasStarted]);
 
     // Calculate and report the bottom position of the manifesto section
     useEffect(() => {
@@ -93,22 +160,26 @@ const Manifesto: React.FC<ManifestoProps> = ({ onHeightChange }) => {
         };
     }, [onHeightChange, lines.length]);
 
+    const highlightWord = (text: string) => {
+        const parts = text.split(/(Ascend|trenches|Failure|Pressure|Elevation)/gi);
+        return parts.map((part, i) => {
+            const lowerPart = part.toLowerCase();
+            if (['ascend', 'trenches', 'failure', 'pressure', 'elevation'].includes(lowerPart)) {
+                return <span key={i} className="manifesto-highlight">{part}</span>;
+            }
+            return part;
+        });
+    };
+
     return (
         <section ref={sectionRef} className="manifesto-section-cinematic">
             <div className="manifesto-lines-container">
                 {lines.map((line, index) => {
-                    const isVisible = visibleLines.has(index);
-                    
-                    const highlightWord = (text: string) => {
-                        const parts = text.split(/(Ascend|trenches|Failure|Pressure|Elevation)/gi);
-                        return parts.map((part, i) => {
-                            const lowerPart = part.toLowerCase();
-                            if (['ascend', 'trenches', 'failure', 'pressure', 'elevation'].includes(lowerPart)) {
-                                return <span key={i} className="manifesto-highlight">{part}</span>;
-                            }
-                            return part;
-                        });
-                    };
+                    const typedText = lineStates.get(index) || '';
+                    const isTyping = index === currentTypingLine;
+                    const isCompleted = typedText.length === line.length && typedText.length > 0;
+                    const isVisible = isTyping || isCompleted;
+                    const displayText = isCompleted ? line : typedText;
 
                     return (
                         <div
@@ -116,9 +187,14 @@ const Manifesto: React.FC<ManifestoProps> = ({ onHeightChange }) => {
                             ref={(el) => {
                                 lineRefs.current[index] = el;
                             }}
-                            className={`manifesto-line manifesto-line-${index} ${isVisible ? 'manifesto-line-visible' : ''}`}
+                            className={`manifesto-line manifesto-line-${index} ${isVisible ? 'manifesto-line-visible' : ''} ${isCompleted ? 'manifesto-line-completed' : ''} ${isTyping ? 'manifesto-line-typing' : ''}`}
                         >
-                            {highlightWord(line)}
+                            <span className="manifesto-text">
+                                {displayText ? highlightWord(displayText) : '\u00A0'}
+                            </span>
+                            {isTyping && typedText.length < line.length && (
+                                <span className="typewriter-cursor">|</span>
+                            )}
                         </div>
                     );
                 })}
