@@ -20,7 +20,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
     const charIdCounter = useRef(0);
     const spawnTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    const characters = [1, 2, 3, 4, 5]; // Character indices
+    const characters = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]; // Character indices
 
     // Prevent scrolling when loading screen is active
     useEffect(() => {
