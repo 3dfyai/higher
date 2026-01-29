@@ -1,68 +1,89 @@
-# Vercel Deployment Guide
+# Deploy to Vercel – Step-by-step
 
-## Issue: Images Not Loading on Vercel
+## 1. Put your project on GitHub (if it isn’t already)
 
-When you deploy to Vercel, environment variables from your `.env` file are **NOT** automatically included. You need to add them in Vercel's dashboard.
+1. Create a repo at [github.com/new](https://github.com/new) (e.g. `higher`).
+2. In your project folder, run:
 
-## Solution: Add Environment Variables in Vercel
+```bash
+git init
+git add .
+git commit -m "Initial commit"
+git branch -M main
+git remote add origin https://github.com/YOUR_USERNAME/higher.git
+git push -u origin main
+```
 
-### Step 1: Go to Vercel Dashboard
+Use your real GitHub username and repo name. If the repo already exists, skip `git init` and only add, commit, and push.
 
-1. Go to [vercel.com](https://vercel.com) and log in
-2. Select your project (`higher`)
+---
 
-### Step 2: Add Environment Variables
+## 2. Import the project on Vercel
 
-1. Go to **Settings** → **Environment Variables**
-2. Add these two variables:
+1. Go to [vercel.com](https://vercel.com) and sign in (GitHub is easiest).
+2. Click **Add New…** → **Project**.
+3. **Import** the `higher` repository (or the one you use).
+4. Leave the defaults:
+   - **Framework Preset:** Vite  
+   - **Build Command:** `npm run build` (or `vite build`)  
+   - **Output Directory:** `dist`  
+   - **Install Command:** `npm install`
+5. **Do not click Deploy yet** – add environment variables first (Step 3).
 
-   **Variable 1:**
-   - **Name**: `VITE_SUPABASE_URL`
-   - **Value**: `https://hmadzkmchhdtnjxilgss.supabase.co`
-   - **Environment**: Select all (Production, Preview, Development)
+---
 
-   **Variable 2:**
-   - **Name**: `VITE_SUPABASE_ANON_KEY`
-   - **Value**: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhtYWR6a21jaGhkdG5qeGlsZ3NzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg2Njc3NzUsImV4cCI6MjA4NDI0Mzc3NX0.PKFtX6gUPopT8vBTad2s85BPsgTeOr0jfdWiKnCraWo`
-   - **Environment**: Select all (Production, Preview, Development)
+## 3. Add environment variables
 
-3. Click **Save** for each variable
+Before deploying, open **Environment Variables** for the project and add these.  
+Use the same names and your own secret values.
 
-### Step 3: Redeploy
+### Frontend (Vite – used in the browser)
 
-After adding the environment variables:
+| Name | Value | Environments |
+|------|--------|--------------|
+| `VITE_SUPABASE_URL` | `https://hmadzkmchhdtnjxilgss.supabase.co` | Production, Preview, Development |
+| `VITE_SUPABASE_ANON_KEY` | Your Supabase **anon** key | Production, Preview, Development |
 
-1. Go to **Deployments** tab
-2. Click the **"..."** menu on your latest deployment
-3. Click **"Redeploy"**
-4. Or push a new commit to trigger a new deployment
+### Backend (API / PFP generator – server only)
 
-## Alternative: Use Local Images (No Supabase)
+| Name | Value | Environments |
+|------|--------|--------------|
+| `SUPABASE_URL` | Same as `VITE_SUPABASE_URL` above | Production, Preview, Development |
+| `SUPABASE_SERVICE_ROLE_KEY` | Your Supabase **service_role** key (from Project Settings → API) | Production, Preview, Development |
+| `GCP_PROJECT_ID` | Your Google Cloud project ID | Production, Preview, Development |
+| `GCP_LOCATION` | e.g. `us-central1` | Production, Preview, Development |
+| `GCP_SERVICE_ACCOUNT_KEY` | Full JSON of your GCP service account key (single line or paste as-is) | Production, Preview, Development |
 
-If you prefer to use local images instead of Supabase:
+- Get **Supabase** keys: [Supabase Dashboard](https://app.supabase.com) → your project → **Settings** → **API**.
+- Get **GCP** values: [Google Cloud Console](https://console.cloud.google.com) → create a service account with Vertex AI permissions → create a JSON key and use that for `GCP_SERVICE_ROLE_KEY`; use the project ID and region (e.g. `us-central1`) for the other two.
 
-1. **Remove Supabase environment variables** from Vercel (or leave them empty)
-2. The app will automatically fallback to local images
-3. Make sure your images are in the `public/` folder
-4. Redeploy
+If you don’t use the PFP generator yet, you can skip the GCP variables; the rest of the site will still deploy. The PFP feature will only work after those are set.
 
-## Verify It's Working
+---
 
-After redeploying:
+## 4. Deploy
 
-1. Check the browser console (F12) for any errors
-2. Images should load from Supabase Storage URLs
-3. If Supabase isn't configured, images will load from `/alon.png`, `/Bandit.png`, etc.
+1. Click **Deploy**.
+2. Wait for the build to finish.
+3. Open the **Visit** link (e.g. `https://higher-xxx.vercel.app`).
 
-## Troubleshooting
+Your Vite app is served from the root, and the `api/generate-pfp.ts` function is available at `/api/generate-pfp`.
 
-**Images still not loading?**
-- Check browser console for errors
-- Verify environment variables are set correctly in Vercel
-- Make sure images are uploaded to Supabase Storage bucket `images`
-- Ensure the bucket is public and has read policies
+---
 
-**Want to use local images only?**
-- Remove or don't set the Supabase environment variables
-- Images will automatically fallback to local paths
-- Make sure all images are in `public/` folder
+## 5. After deployment
+
+- **Custom domain:** Project → **Settings** → **Domains** → add your domain.
+- **Env changes:** Change variables in **Settings** → **Environment Variables**, then **Deployments** → **…** on the latest deployment → **Redeploy**.
+- **New code:** Push to `main` (or your connected branch); Vercel will redeploy automatically.
+
+---
+
+## Quick checklist
+
+- [ ] Code is on GitHub (or connected Git provider).
+- [ ] Project imported on Vercel.
+- [ ] `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` set.
+- [ ] For PFP: `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `GCP_PROJECT_ID`, `GCP_LOCATION`, `GCP_SERVICE_ACCOUNT_KEY` set.
+- [ ] Deploy triggered and build succeeded.
+- [ ] Site and (if configured) `/api/generate-pfp` work on the Vercel URL.

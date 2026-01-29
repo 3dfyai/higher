@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import ProfilePictureGenerator from './ProfilePictureGenerator';
 
 interface ManifestoProps {
     onHeightChange?: (bottomPosition: number) => void;
@@ -167,6 +168,7 @@ const Manifesto: React.FC<ManifestoProps> = ({ onHeightChange }) => {
                         <img src="/X.png" alt="X" className="social-logo" />
                     </a>
                 </div>
+                <ProfilePictureGenerator />
             </div>
         </section>
     );

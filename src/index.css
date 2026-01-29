@@ -548,7 +548,7 @@ body {
   align-items: center;
   justify-content: center;
   padding: 8vh 4vw 0 4vw;
-  gap: 3vh;
+  gap: 2vh;
   z-index: 15;
   contain: layout;
   opacity: 1;
@@ -631,6 +631,289 @@ body {
   object-fit: contain;
   display: block;
   transition: all 0.3s ease;
+}
+
+/* PFP Generator - below social links */
+.pfp-generator {
+  width: 100%;
+  max-width: 1800px;
+  margin: 0 auto;
+  margin-top: 1vh;
+  margin-bottom: -2vh;
+  padding: 2rem 1rem;
+  background: transparent;
+  text-align: center;
+}
+
+.pfp-generator-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: clamp(1.25rem, 3vw, 1.5rem);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.pfp-generator-desc {
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.pfp-upload-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.pfp-dropzone {
+  border: 2px dashed rgba(20, 241, 149, 0.4);
+  border-radius: 10px;
+  padding: 1rem 2rem;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pfp-dropzone:hover,
+.pfp-dropzone-active {
+  border-color: var(--solana-green);
+  background: rgba(20, 241, 149, 0.05);
+}
+
+.pfp-dropzone-has-file {
+  border-style: solid;
+}
+
+.pfp-dropzone-text {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+.pfp-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.pfp-btn {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 0.6rem 1.5rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.pfp-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.pfp-btn-generate {
+  background: var(--solana-green);
+  color: #000;
+}
+
+.pfp-btn-generate:not(:disabled):hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.pfp-btn-clear {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.pfp-btn-clear:hover {
+  color: var(--text-primary);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Single centered image box – really big, square 1:1 */
+.pfp-image-box {
+  width: 100%;
+  max-width: 900px;
+  aspect-ratio: 1;
+  margin: 2rem auto;
+  border-radius: 12px;
+  border: 2px solid rgba(20, 241, 149, 0.25);
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Crop uploaded image to 1:1 center */
+.pfp-uploaded-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  position: absolute;
+  inset: 0;
+}
+
+.pfp-placeholder {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  opacity: 0.8;
+}
+
+/* Loading breathing animation – fills square */
+.pfp-generating {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 2rem;
+}
+
+.pfp-generating-dots {
+  width: 64px;
+  height: 64px;
+  border: 4px solid rgba(20, 241, 149, 0.3);
+  border-top-color: var(--solana-green);
+  border-radius: 50%;
+  animation: pfp-spin 1s linear infinite;
+}
+
+.pfp-generating-text {
+  font-size: 1.15rem;
+  color: var(--text-primary);
+  animation: pfp-breathe 2s ease-in-out infinite;
+}
+
+@keyframes pfp-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pfp-breathe {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* Generated result – fills pane, no inner border (single box only) */
+.pfp-result-img-wrap {
+  position: absolute;
+  inset: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  display: block;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.pfp-result-img-wrap:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 24px rgba(20, 241, 149, 0.25);
+}
+
+.pfp-result-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+.pfp-result-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+}
+
+.pfp-btn-download {
+  text-decoration: none;
+  background: var(--solana-green);
+  color: #000;
+  display: inline-block;
+}
+
+.pfp-btn-download:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.pfp-error {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: #f87171;
+}
+
+/* Popup overlay when clicking generated image */
+.pfp-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  animation: pfp-overlay-in 0.2s ease-out;
+}
+
+@keyframes pfp-overlay-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.pfp-overlay-close {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  width: 48px;
+  height: 48px;
+  border: none;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-size: 1.75rem;
+  line-height: 1;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.pfp-overlay-close:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.pfp-overlay-content {
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pfp-overlay-img {
+  max-width: 100%;
+  max-height: 85vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 0 40px rgba(20, 241, 149, 0.2);
 }
 
 /* 8. Stats Section */
@@ -793,10 +1076,10 @@ body {
   font-weight: 400;
 }
 
-/* 11. GIF Frames - Custom Border Style */
+/* 11. GIF Frames - Custom Border Style (8 frames, larger to fill space) */
 .gif-frame {
   position: absolute;
-  padding: 12px;
+  padding: 14px;
   background: rgba(10, 25, 47, 0.8);
   border: 2px solid rgba(20, 241, 149, 0.3);
   border-radius: 4px;
@@ -807,11 +1090,11 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 300px;
+  min-width: 380px;
   width: fit-content;
   height: auto;
-  contain: layout style; /* Performance optimization without GPU */
-  pointer-events: auto; /* Ensure clickable */
+  contain: layout style;
+  pointer-events: auto;
 }
 
 .gif-frame:hover {
@@ -831,7 +1114,7 @@ body {
   z-index: 0;
   border-radius: 2px;
   box-sizing: border-box;
-  min-width: 300px;
+  min-width: 380px;
   width: fit-content;
   height: auto;
 }
@@ -840,13 +1123,14 @@ body {
   cursor: pointer;
 }
 
-.gif-frame-content img {
-  width: 400px !important;
+.gif-frame-content img,
+.gif-frame-content video {
+  width: 520px !important;
   height: auto !important;
-  max-width: 500px;
-  max-height: 500px;
-  min-width: 300px !important;
-  min-height: 200px;
+  max-width: 640px;
+  max-height: 600px;
+  min-width: 380px !important;
+  min-height: 280px;
   display: block;
   object-fit: contain;
   transition: transform 0.2s ease;
@@ -854,7 +1138,12 @@ body {
   image-rendering: crisp-edges;
 }
 
-.gif-frame:hover .gif-frame-content img {
+.gif-frame-content video {
+  background: #000;
+}
+
+.gif-frame:hover .gif-frame-content img,
+.gif-frame:hover .gif-frame-content video {
   transform: scale(1.05);
 }
 
@@ -902,20 +1191,14 @@ body {
   transform: rotate(-4deg);
 }
 
-.gif-frame-9 {
-  transform: rotate(3deg);
+/* Last row: two frames centered in the middle to close footer */
+.gif-frame-7.gif-frame-footer-left {
+  transform: translateX(calc(-100% - 16px)) rotate(6deg);
 }
 
-.gif-frame-10 {
-  transform: rotate(-5deg);
-}
-
-.gif-frame-11 {
-  transform: rotate(4deg);
-}
-
-.gif-frame-11.gif-frame-center {
-  transform: translateX(-50%) rotate(4deg);
+.gif-frame-8.gif-frame-footer-right {
+  right: auto;
+  transform: translateX(16px) rotate(-4deg);
 }
 
 /* Image Modal/Lightbox */
@@ -946,7 +1229,8 @@ body {
   cursor: default;
 }
 
-.image-modal-image {
+.image-modal-image,
+.image-modal-video {
   max-width: 100%;
   max-height: 90vh;
   width: auto;

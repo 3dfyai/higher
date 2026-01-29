@@ -1,18 +1,17 @@
 import React, { useState, useEffect } from 'react';
 
-// Static image paths - using local WebP images
-const IMAGE_PATHS = [
-    '/alon.webp',
-    '/Bandit.webp',
-    '/cented.webp',
-    '/clukz.webp',
-    '/cupsey.webp',
-    '/daumen.webp',
-    '/duvall.webp',
-    '/gake.webp',
-    '/jijo2.webp',
-    '/joji.webp',
-    '/mitch.webp'
+const SUPABASE_STORAGE = 'https://hmadzkmchhdtnjxilgss.supabase.co/storage/v1/object/public/images';
+
+// WebM character videos from Supabase (8 frames, one per character)
+const VIDEO_PATHS = [
+    `${SUPABASE_STORAGE}/alon.webm`,
+    `${SUPABASE_STORAGE}/cented.webm`,
+    `${SUPABASE_STORAGE}/clukz.webm`,
+    `${SUPABASE_STORAGE}/cupsey.webm`,
+    `${SUPABASE_STORAGE}/daumen.webm`,
+    `${SUPABASE_STORAGE}/jijo.webm`,
+    `${SUPABASE_STORAGE}/joji.webm`,
+    `${SUPABASE_STORAGE}/mitch.webm`,
 ];
 
 interface ImageFrameProps {
@@ -25,11 +24,11 @@ interface ImageFrameProps {
 
 const ImageFrame = React.memo<ImageFrameProps>(({ className, style, imageIndex, onImageClick, imagesPreloaded }) => {
     const frameRef = React.useRef<HTMLDivElement>(null);
-    const imagePath = IMAGE_PATHS[imageIndex % IMAGE_PATHS.length];
+    const videoPath = VIDEO_PATHS[imageIndex];
 
     const handleClick = React.useCallback(() => {
-        onImageClick(imagePath);
-    }, [imagePath, onImageClick]);
+        onImageClick(videoPath);
+    }, [videoPath, onImageClick]);
 
     return (
         <div 
@@ -39,7 +38,15 @@ const ImageFrame = React.memo<ImageFrameProps>(({ className, style, imageIndex, 
         >
             <div className="gif-frame-content" onClick={handleClick}>
                 {imagesPreloaded ? (
-                    <img src={imagePath} alt="Character" loading="eager" className="clickable-image" />
+                    <video
+                        src={videoPath}
+                        className="clickable-image gif-frame-video"
+                        loop
+                        autoPlay
+                        muted
+                        playsInline
+                        aria-label="Character"
+                    />
                 ) : (
                     <span className="gif-loading">LOADING...</span>
                 )}
@@ -58,36 +65,10 @@ const GifFrames: React.FC<GifFramesProps> = ({ manifestoBottomPosition }) => {
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const [imagesPreloaded, setImagesPreloaded] = useState(false);
 
-    // Preload all images immediately when component mounts (start immediately, don't wait)
+    // Mark videos ready after mount so frames show (videos load and loop on their own)
     useEffect(() => {
-        // Start preloading immediately
-        IMAGE_PATHS.forEach((imagePath) => {
-            const img = new Image();
-            img.src = imagePath; // Start loading immediately
-        });
-
-        // Set as preloaded after a short delay to allow browser to start loading
-        // This way images start loading immediately but we show them once browser has them cached
-        const checkImagesLoaded = async () => {
-            const imagePromises = IMAGE_PATHS.map((imagePath) => {
-                return new Promise<void>((resolve) => {
-                    const img = new Image();
-                    if (img.complete) {
-                        resolve();
-                    } else {
-                        img.onload = () => resolve();
-                        img.onerror = () => resolve(); // Continue even if one fails
-                        img.src = imagePath;
-                    }
-                });
-            });
-
-            await Promise.all(imagePromises);
-            setImagesPreloaded(true);
-        };
-
-        // Start checking immediately
-        checkImagesLoaded();
+        const t = setTimeout(() => setImagesPreloaded(true), 100);
+        return () => clearTimeout(t);
     }, []);
 
     useEffect(() => {
@@ -113,18 +94,16 @@ const GifFrames: React.FC<GifFramesProps> = ({ manifestoBottomPosition }) => {
     useEffect(() => {
         if (!manifestoBottomPosition) return;
 
-        const rowSpacing = 30;
+        const rowSpacing = 38;
         const startOffset = 10;
         const positions: Record<number, string> = {};
 
-        // Calculate all positions once (6 rows for 11 images)
+        // 4 rows for 8 frames (2 per row)
         const offsets = [
             startOffset,
             startOffset + rowSpacing,
             startOffset + rowSpacing * 2,
             startOffset + rowSpacing * 3,
-            startOffset + rowSpacing * 4,
-            startOffset + rowSpacing * 5,
         ];
 
         offsets.forEach((offsetVh, index) => {
@@ -135,9 +114,8 @@ const GifFrames: React.FC<GifFramesProps> = ({ manifestoBottomPosition }) => {
         setGifPositions(positions);
     }, [manifestoBottomPosition, windowHeight]);
 
-    // Spacing between GIF rows (in viewport heights)
-    const rowSpacing = 30; // 30vh between rows
-    const startOffset = 10; // Start 10vh after manifesto ends
+    const rowSpacing = 38;
+    const startOffset = 10;
 
     const getTopPosition = (offsetVh: number) => {
         if (!manifestoBottomPosition) {
@@ -178,27 +156,33 @@ const GifFrames: React.FC<GifFramesProps> = ({ manifestoBottomPosition }) => {
 
     return (
         <>
-            {/* === BELOW MANIFESTO (using static images) === */}
+            {/* 8 character video frames (4 rows × 2) */}
             <ImageFrame className="gif-frame-1" style={{ top: getPosition(0), left: '5%' }} imageIndex={0} onImageClick={handleImageClick} imagesPreloaded={imagesPreloaded} />
             <ImageFrame className="gif-frame-2" style={{ top: getPosition(0), right: '5%' }} imageIndex={1} onImageClick={handleImageClick} imagesPreloaded={imagesPreloaded} />
-            <ImageFrame className="gif-frame-3" style={{ top: getPosition(1), left: '15%' }} imageIndex={2} onImageClick={handleImageClick} imagesPreloaded={imagesPreloaded} />
-            <ImageFrame className="gif-frame-4" style={{ top: getPosition(1), right: '15%' }} imageIndex={3} onImageClick={handleImageClick} imagesPreloaded={imagesPreloaded} />
-            <ImageFrame className="gif-frame-5" style={{ top: getPosition(2), left: '3%' }} imageIndex={4} onImageClick={handleImageClick} imagesPreloaded={imagesPreloaded} />
-            <ImageFrame className="gif-frame-6" style={{ top: getPosition(2), right: '3%' }} imageIndex={5} onImageClick={handleImageClick} imagesPreloaded={imagesPreloaded} />
-            <ImageFrame className="gif-frame-7" style={{ top: getPosition(3), left: '10%' }} imageIndex={6} onImageClick={handleImageClick} imagesPreloaded={imagesPreloaded} />
-            <ImageFrame className="gif-frame-8" style={{ top: getPosition(3), right: '10%' }} imageIndex={7} onImageClick={handleImageClick} imagesPreloaded={imagesPreloaded} />
-            <ImageFrame className="gif-frame-9" style={{ top: getPosition(4), left: '2%' }} imageIndex={8} onImageClick={handleImageClick} imagesPreloaded={imagesPreloaded} />
-            <ImageFrame className="gif-frame-10" style={{ top: getPosition(4), right: '2%' }} imageIndex={9} onImageClick={handleImageClick} imagesPreloaded={imagesPreloaded} />
-            <ImageFrame className="gif-frame-11 gif-frame-center" style={{ top: getPosition(5), left: '50%' }} imageIndex={10} onImageClick={handleImageClick} imagesPreloaded={imagesPreloaded} />
+            <ImageFrame className="gif-frame-3" style={{ top: getPosition(1), left: '10%' }} imageIndex={2} onImageClick={handleImageClick} imagesPreloaded={imagesPreloaded} />
+            <ImageFrame className="gif-frame-4" style={{ top: getPosition(1), right: '10%' }} imageIndex={3} onImageClick={handleImageClick} imagesPreloaded={imagesPreloaded} />
+            <ImageFrame className="gif-frame-5" style={{ top: getPosition(2), left: '5%' }} imageIndex={4} onImageClick={handleImageClick} imagesPreloaded={imagesPreloaded} />
+            <ImageFrame className="gif-frame-6" style={{ top: getPosition(2), right: '5%' }} imageIndex={5} onImageClick={handleImageClick} imagesPreloaded={imagesPreloaded} />
+            <ImageFrame className="gif-frame-7 gif-frame-footer-left" style={{ top: getPosition(3), left: '50%' }} imageIndex={6} onImageClick={handleImageClick} imagesPreloaded={imagesPreloaded} />
+            <ImageFrame className="gif-frame-8 gif-frame-footer-right" style={{ top: getPosition(3), left: '50%' }} imageIndex={7} onImageClick={handleImageClick} imagesPreloaded={imagesPreloaded} />
 
-            {/* Image Modal/Lightbox */}
+            {/* Video Modal/Lightbox */}
             {selectedImage && (
                 <div className="image-modal-overlay" onClick={handleCloseModal}>
                     <div className="image-modal-content" onClick={(e) => e.stopPropagation()}>
                         <button className="image-modal-close" onClick={handleCloseModal} aria-label="Close">
                             ×
                         </button>
-                        <img src={selectedImage} alt="Character" className="image-modal-image" />
+                        <video
+                            src={selectedImage}
+                            className="image-modal-image image-modal-video"
+                            loop
+                            autoPlay
+                            muted
+                            playsInline
+                            controls
+                            aria-label="Character"
+                        />
                     </div>
                 </div>
             )}
