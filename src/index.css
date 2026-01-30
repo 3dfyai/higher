@@ -575,6 +575,14 @@ body {
   text-shadow: 0 0 20px rgba(20, 241, 149, 0.5);
 }
 
+.ca-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
 .ca-section {
   display: flex;
   align-items: center;
@@ -599,6 +607,33 @@ body {
   border: 1px solid rgba(20, 241, 149, 0.3);
   font-family: 'JetBrains Mono', monospace;
   letter-spacing: 0.1em;
+}
+
+.ca-copy-btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(0.875rem, 2vw, 1rem);
+  font-weight: 600;
+  color: var(--solana-green);
+  background: rgba(20, 241, 149, 0.15);
+  border: 1px solid rgba(20, 241, 149, 0.4);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ca-copy-btn:hover {
+  background: rgba(20, 241, 149, 0.25);
+  border-color: rgba(20, 241, 149, 0.6);
+}
+
+.ca-copy-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.ca-copy-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .social-links {

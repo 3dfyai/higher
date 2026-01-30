@@ -1,12 +1,26 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ProfilePictureGenerator from './ProfilePictureGenerator';
 
+// Replace with your links and CA when ready
+const PUMPFUN_URL = '#';
+const DEXSCREENER_URL = '#';
+const CONTRACT_ADDRESS = '';
+
 interface ManifestoProps {
     onHeightChange?: (bottomPosition: number) => void;
 }
 
 const Manifesto: React.FC<ManifestoProps> = ({ onHeightChange }) => {
     const [visibleLines, setVisibleLines] = useState<Set<number>>(new Set());
+    const [caCopied, setCaCopied] = useState(false);
+
+    const copyCa = () => {
+        if (!CONTRACT_ADDRESS) return;
+        navigator.clipboard.writeText(CONTRACT_ADDRESS).then(() => {
+            setCaCopied(true);
+            setTimeout(() => setCaCopied(false), 2000);
+        });
+    };
     const lineRefs = useRef<(HTMLDivElement | null)[]>([]);
     const sectionRef = useRef<HTMLElement>(null);
     const imageRef = useRef<HTMLDivElement>(null);
@@ -153,18 +167,29 @@ const Manifesto: React.FC<ManifestoProps> = ({ onHeightChange }) => {
                 className="token-info-section element-visible"
             >
                 <div className="token-symbol">$ASCEND</div>
-                <div className="ca-section">
-                    <span className="ca-label">CA:</span>
-                    <span className="ca-value">CA</span>
+                <div className="ca-row">
+                    <div className="ca-section">
+                        <span className="ca-label">CA:</span>
+                        <span className="ca-value">{CONTRACT_ADDRESS || '—'}</span>
+                    </div>
+                    <button
+                        type="button"
+                        className="ca-copy-btn"
+                        onClick={copyCa}
+                        disabled={!CONTRACT_ADDRESS}
+                        aria-label="Copy contract address"
+                    >
+                        {caCopied ? 'Copied!' : 'Copy'}
+                    </button>
                 </div>
                 <div className="social-links">
-                    <a href="#" className="social-link" aria-label="Pumpfun">
+                    <a href={PUMPFUN_URL} target="_blank" rel="noopener noreferrer" className="social-link" aria-label="Pumpfun">
                         <img src="/PUMPFUN.png" alt="Pumpfun" className="social-logo" />
                     </a>
-                    <a href="#" className="social-link" aria-label="DexScreener">
+                    <a href={DEXSCREENER_URL} target="_blank" rel="noopener noreferrer" className="social-link" aria-label="DexScreener">
                         <img src="/DEXSCREENER.png" alt="DexScreener" className="social-logo" />
                     </a>
-                    <a href="#" className="social-link" aria-label="X (Twitter)">
+                    <a href="https://x.com/Ascendnow_" target="_blank" rel="noopener noreferrer" className="social-link" aria-label="X (Twitter)">
                         <img src="/X.png" alt="X" className="social-logo" />
                     </a>
                 </div>
