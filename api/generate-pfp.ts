@@ -207,6 +207,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     res.status(200).json({ url });
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error';
+    const is429 =
+      message.includes('429') ||
+      message.includes('RESOURCE_EXHAUSTED') ||
+      message.includes('Resource exhausted');
+    if (is429) {
+      res.status(429).json({
+        error: 'Quota limit reached. Please try again in 5 minutes.',
+      });
+      return;
+    }
     console.error('generate-pfp error:', err);
     res.status(500).json({ error: message });
   }

@@ -72,7 +72,11 @@ export default function ProfilePictureGenerator() {
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        setError(data.error ?? `Request failed (${res.status})`);
+        const friendlyMessage =
+          res.status === 429
+            ? 'Quota limit reached. Please try again in 5 minutes.'
+            : data.error ?? `Request failed (${res.status})`;
+        setError(friendlyMessage);
         return;
       }
       if (data.url) setResultUrl(data.url);
