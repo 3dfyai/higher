@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ProfilePictureGenerator from './ProfilePictureGenerator';
 
-// Replace with your links and CA when ready
-const PUMPFUN_URL = '#';
-const DEXSCREENER_URL = '#';
-const CONTRACT_ADDRESS = '';
+const PUMPFUN_URL = 'https://pump.fun/coin/HRz7kVFNjg49qj19r2qEkKAczv4G2Myq9vQvriqTpump';
+const DEXSCREENER_URL = 'https://dexscreener.com/solana/HRz7kVFNjg49qj19r2qEkKAczv4G2Myq9vQvriqTpump';
+const CONTRACT_ADDRESS = 'HRz7kVFNjg49qj19r2qEkKAczv4G2Myq9vQvriqTpump';
 
 interface ManifestoProps {
     onHeightChange?: (bottomPosition: number) => void;
