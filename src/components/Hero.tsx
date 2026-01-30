@@ -1,16 +1,31 @@
-import React from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 
 const Hero: React.FC = () => {
+    const videoRef = useRef<HTMLVideoElement>(null);
+    const [muted, setMuted] = useState(true); // Start muted so autoplay works; unmute on first interaction
+
+    // Unmute video on first user interaction (browsers block autoplay with sound)
+    useEffect(() => {
+        const unmute = () => {
+            setMuted(false);
+            videoRef.current?.play().catch(() => {});
+        };
+        const events = ['click', 'touchstart', 'keydown'];
+        events.forEach((e) => window.addEventListener(e, unmute, { once: true }));
+        return () => events.forEach((e) => window.removeEventListener(e, unmute));
+    }, []);
+
     return (
         <section className="hero">
             <video
+                ref={videoRef}
                 className="hero-video-bg"
                 autoPlay
                 loop
-                muted
+                muted={muted}
                 playsInline
             >
-                <source src="/hero_background.mp4" type="video/mp4" />
+                <source src="https://pub-0831e98b478f493081404c7cea6656fb.r2.dev/hero_background_test.mp4" type="video/mp4" />
             </video>
             <div className="hero-overlay"></div>
 

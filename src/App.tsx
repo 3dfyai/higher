@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import BackgroundGrid from './components/BackgroundGrid';
 import Hero from './components/Hero';
 import Footer from './components/Footer';
@@ -30,27 +30,6 @@ CHARACTER_IMAGES.forEach((imagePath) => {
 function App() {
   const [loading, setLoading] = useState(true);
   const [manifestoBottomPosition, setManifestoBottomPosition] = useState<number | undefined>(undefined);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-
-  // Play background music when site loads (after loading screen)
-  useEffect(() => {
-    if (!loading) {
-      const audio = new Audio('/space-ambient-cinematic-348459.mp3');
-      audio.loop = true;
-      audio.volume = 0.4; // Set volume to 40% for ambient background music
-      audioRef.current = audio;
-      audio.play().catch((err) => {
-        console.log('Background music play failed:', err);
-      });
-      
-      return () => {
-        if (audioRef.current) {
-          audioRef.current.pause();
-          audioRef.current = null;
-        }
-      };
-    }
-  }, [loading]);
 
   useEffect(() => {
     let rafId: number | null = null;
