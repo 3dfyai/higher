@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ProfilePictureGenerator from './ProfilePictureGenerator';
 
-const PUMPFUN_URL = 'https://pump.fun/coin/HRz7kVFNjg49qj19r2qEkKAczv4G2Myq9vQvriqTpump';
-const DEXSCREENER_URL = 'https://dexscreener.com/solana/HRz7kVFNjg49qj19r2qEkKAczv4G2Myq9vQvriqTpump';
-const CONTRACT_ADDRESS = 'HRz7kVFNjg49qj19r2qEkKAczv4G2Myq9vQvriqTpump';
+const PUMPFUN_URL = 'https://pump.fun/8d8xzKZY3RQMZqB3tCZVbiFdNPRZKBu2UgCpBpFQpump';
+const DEXSCREENER_URL = 'https://dexscreener.com/solana/8d8xzKZY3RQMZqB3tCZVbiFdNPRZKBu2UgCpBpFQpump';
+const CONTRACT_ADDRESS = '8d8xzKZY3RQMZqB3tCZVbiFdNPRZKBu2UgCpBpFQpump';
 
 interface ManifestoProps {
     onHeightChange?: (bottomPosition: number) => void;
